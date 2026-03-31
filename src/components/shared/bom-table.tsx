@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { createBomItem, deleteBomItem } from "@/actions/bom";
+import { createBomItem, updateBomItem, deleteBomItem } from "@/actions/bom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Pencil, Check } from "lucide-react";
 import { CatalogPicker } from "./catalog-picker";
 import type { Database } from "@/lib/types/database";
 
@@ -158,29 +158,7 @@ export function BomTable({ projectId, bomType, items }: BomTableProps) {
             </thead>
             <tbody className="divide-y">
               {items.map((item, i) => (
-                <tr key={item.id} className="group hover:bg-muted/20 transition-colors">
-                  <td className="px-3 py-2 text-muted-foreground font-mono text-xs tabular-nums">{i}</td>
-                  <td className="px-3 py-2 font-medium">{item.description}</td>
-                  <td className="px-3 py-2 text-right font-mono tabular-nums">{item.quantity}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{item.unit}</td>
-                  <td className="px-3 py-2 text-right font-mono tabular-nums">
-                    {item.unit_price != null ? `$${Number(item.unit_price).toFixed(2)}` : "—"}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono tabular-nums font-medium">
-                    {item.unit_price != null
-                      ? `$${((item.quantity ?? 0) * Number(item.unit_price)).toFixed(2)}`
-                      : "—"}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{item.cost_code || "—"}</td>
-                  <td className="px-3 py-2">
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </td>
-                </tr>
+                <BomRow key={item.id} item={item} index={i} projectId={projectId} onDelete={handleDelete} />
               ))}
             </tbody>
             {totalValue > 0 && (
@@ -198,5 +176,103 @@ export function BomTable({ projectId, bomType, items }: BomTableProps) {
         </div>
       ) : null}
     </div>
+  );
+}
+
+// Inline-editable row component
+function BomRow({
+  item,
+  index,
+  projectId,
+  onDelete,
+}: {
+  item: BomItem;
+  index: number;
+  projectId: string;
+  onDelete: (id: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [desc, setDesc] = useState(item.description);
+  const [qty, setQty] = useState(String(item.quantity));
+  const [unit, setUnit] = useState(item.unit || "each");
+  const [price, setPrice] = useState(item.unit_price != null ? String(item.unit_price) : "");
+  const [costCode, setCostCode] = useState(item.cost_code || "");
+
+  async function handleSave() {
+    setSaving(true);
+    await updateBomItem(item.id, projectId, {
+      description: desc,
+      quantity: parseFloat(qty) || 0,
+      unit,
+      unit_price: price ? parseFloat(price) : null,
+      cost_code: costCode || null,
+    });
+    setEditing(false);
+    setSaving(false);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") handleSave();
+    if (e.key === "Escape") setEditing(false);
+  }
+
+  const subtotal = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
+
+  if (editing) {
+    return (
+      <tr className="bg-primary/5">
+        <td className="px-3 py-1.5 text-muted-foreground font-mono text-xs tabular-nums">{index}</td>
+        <td className="px-1 py-1.5">
+          <Input value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm" autoFocus />
+        </td>
+        <td className="px-1 py-1.5">
+          <Input value={qty} onChange={(e) => setQty(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className="h-7 text-sm font-mono text-right w-20" />
+        </td>
+        <td className="px-1 py-1.5">
+          <Input value={unit} onChange={(e) => setUnit(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm w-16" />
+        </td>
+        <td className="px-1 py-1.5">
+          <Input value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className="h-7 text-sm font-mono text-right w-24" />
+        </td>
+        <td className="px-3 py-1.5 text-right font-mono tabular-nums text-xs text-muted-foreground">
+          {subtotal > 0 ? `$${subtotal.toFixed(2)}` : "—"}
+        </td>
+        <td className="px-1 py-1.5">
+          <Input value={costCode} onChange={(e) => setCostCode(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm font-mono w-24" />
+        </td>
+        <td className="px-2 py-1.5">
+          <button onClick={handleSave} disabled={saving} className="rounded p-1 text-primary hover:bg-primary/10 transition-colors">
+            <Check className="h-3.5 w-3.5" />
+          </button>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr className="group hover:bg-muted/20 transition-colors">
+      <td className="px-3 py-2 text-muted-foreground font-mono text-xs tabular-nums">{index}</td>
+      <td className="px-3 py-2 font-medium cursor-pointer" onClick={() => setEditing(true)}>{item.description}</td>
+      <td className="px-3 py-2 text-right font-mono tabular-nums cursor-pointer" onClick={() => setEditing(true)}>{item.quantity}</td>
+      <td className="px-3 py-2 text-muted-foreground cursor-pointer" onClick={() => setEditing(true)}>{item.unit}</td>
+      <td className="px-3 py-2 text-right font-mono tabular-nums cursor-pointer" onClick={() => setEditing(true)}>
+        {item.unit_price != null ? `$${Number(item.unit_price).toFixed(2)}` : "—"}
+      </td>
+      <td className="px-3 py-2 text-right font-mono tabular-nums font-medium">
+        {item.unit_price != null ? `$${((item.quantity ?? 0) * Number(item.unit_price)).toFixed(2)}` : "—"}
+      </td>
+      <td className="px-3 py-2 font-mono text-xs text-muted-foreground cursor-pointer" onClick={() => setEditing(true)}>{item.cost_code || "—"}</td>
+      <td className="px-3 py-2">
+        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => setEditing(true)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground">
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button onClick={() => onDelete(item.id)} className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }

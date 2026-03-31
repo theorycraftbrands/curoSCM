@@ -44,6 +44,25 @@ export async function createBomItem(
   return { success: true };
 }
 
+export async function updateBomItem(
+  itemId: string,
+  projectId: string,
+  data: {
+    description?: string;
+    quantity?: number;
+    unit?: string;
+    unit_price?: number | null;
+    cost_code?: string | null;
+    group_name?: string | null;
+  }
+) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("bom_items").update(data).eq("id", itemId);
+  if (error) return { error: error.message };
+  revalidatePath(`/projects/${projectId}/bom`);
+  return { success: true };
+}
+
 export async function deleteBomItem(itemId: string, projectId: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("bom_items").delete().eq("id", itemId);
