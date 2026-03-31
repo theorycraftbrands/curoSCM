@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:types": "npx supabase gen types typescript --local > src/lib/types/database.ts",
+    "db:types": "npx supabase gen types typescript --local 2>/dev/null | grep -v '^Connecting' > src/lib/types/database.ts",
     "db:reset": "npx supabase db reset",
     "db:migrate": "npx supabase migration new"
   },

@@ -1,18 +1,22 @@
-"use client";
-
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Breadcrumbs } from "./breadcrumbs";
+import { UserMenu } from "./user-menu";
+import { getSessionUser } from "@/lib/auth/session";
 
-export function TopNav() {
+export async function TopNav() {
+  const user = await getSessionUser();
+
+  const initials = user?.profile.full_name
+    ? user.profile.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "?";
+
   return (
     <header className="flex h-14 items-center justify-between border-b bg-background px-4">
       {/* Left: Breadcrumbs */}
@@ -31,21 +35,11 @@ export function TopNav() {
         </Button>
 
         {/* User menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent transition-colors">
-            <Avatar className="h-7 w-7">
-              <AvatarFallback className="text-xs">
-                <User className="h-3.5 w-3.5" />
-              </AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Team Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserMenu
+          userName={user?.profile.full_name ?? "User"}
+          userEmail={user?.email ?? ""}
+          initials={initials}
+        />
       </div>
     </header>
   );

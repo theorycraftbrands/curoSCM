@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signIn } from "@/actions/auth";
+import { signUp } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
-    const result = await signIn(formData);
+    const result = await signUp(formData);
     if (result?.error) {
       setError(result.error);
       setLoading(false);
@@ -31,12 +31,24 @@ export default function LoginPage() {
         <span className="text-lg font-semibold tracking-tight">CuroSCM</span>
       </div>
 
-      <h1 className="text-xl font-semibold tracking-tight">Welcome back</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Create your account</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Sign in to your account
+        Start managing your supply chain
       </p>
 
       <form action={handleSubmit} className="mt-6 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="fullName">Full name</Label>
+          <Input
+            id="fullName"
+            name="fullName"
+            type="text"
+            placeholder="Jane Smith"
+            required
+            autoComplete="name"
+          />
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -57,7 +69,8 @@ export default function LoginPage() {
             type="password"
             placeholder="••••••••"
             required
-            autoComplete="current-password"
+            minLength={6}
+            autoComplete="new-password"
           />
         </div>
 
@@ -68,17 +81,17 @@ export default function LoginPage() {
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? "Creating account..." : "Create account"}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
+        Already have an account?{" "}
         <Link
-          href="/signup"
+          href="/login"
           className="font-medium text-primary hover:text-primary/80 transition-colors"
         >
-          Create one
+          Sign in
         </Link>
       </p>
     </div>
