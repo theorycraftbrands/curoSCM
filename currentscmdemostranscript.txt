@@ -1,0 +1,149 @@
+0:099 secondsHi, this is Robert Marne with Current SCM. In this video, I'm going to quickly cover some major concepts within the application and show a little bit of
+0:1818 secondswhere you can find different bits of information.
+0:2222 secondsThanks. When you first log in, this is the main dashboard of the application. gives you a little bit of context to,
+0:2929 secondsyou know, what's going on within your task, what your team's doing, as well as gives you an entry into, you know, all
+0:3838 secondsother parts of the application. Looking at the navigation within it, we consider this our main
+0:4646 secondsleft menu. And from here, you can do most things. Our top menu is split into an area for your last project, your current project that you're working on,
+0:5656 secondsas well as some uh some different menus.
+1:001 minuteSo, clicking on the bell, the n notification bell, we see what all of our notifications
+1:071 minute, 7 secondsare. Quick access brings us quickly back to the projects that we most recently worked on, as well as um orders, bids,
+1:151 minute, 15 secondsthings of that nature.
+1:181 minute, 18 secondsclicking on our names. Um, depending on your role, you be able to administer your organization as well as switch to other teams you might be part of or log
+1:271 minute, 27 secondsout. Great. So, from our lefthand menu at the top, we have all of our team scoped resources. So, these are people,
+1:371 minute, 37 secondsplaces, businesses, our actual catalog,
+1:391 minute, 39 secondsand then access into our projects. The second part of our menu goes into working within a specific project. So in
+1:471 minute, 47 secondsthis demo we have a project called 2021 bikes and that has its own requisitions,
+1:531 minute, 53 secondsbids, orders and reporting functionality. Next part of the menu talks about the account and this menu again will be contextual on your role
+2:012 minutes, 1 secondwithin your organization. Um all users have a user hub. Team administrators can customize their team and organizational
+2:102 minutes, 10 secondsenterp administrators can manage the organization's account. And then from there some things to help you out. Um we have our uh in application help
+2:182 minutes, 18 secondsdocuments contact for support if you're a name support contact and then ability to log out.
+2:232 minutes, 23 secondsAgain without further ado I'm just going to quickly click through a few things and sort of highlight what they are and and what they're used for. So um
+2:302 minutes, 30 secondspeople's really straightforward from a a vendor management perspective. Uh we need to keep track of you know who works where perhaps
+2:392 minutes, 39 secondsuh jot down some notes, attach some files or assign tasks uh related to a person. Flipping over to our businesses.
+2:502 minutes, 50 secondsUm again businesses essential for our procurement activities and businesses uh can be you
+2:572 minutes, 57 secondsknow some are are many types. Um you know pretty much within the application general concept is uh there is the
+3:053 minutes, 5 secondsability to you know add new records dive in and view that record. You know in getting into this business uh again the
+3:123 minutes, 12 secondshighlight this notes files and tasks is a very common thing that you're going to see throughout pretty much the entire application. Again it's the thought is
+3:203 minutes, 20 secondsthat this is a a good place for your teams to put relevant information to the uh to the entity that we're looking at. So um within the
+3:293 minutes, 29 secondsbusiness, businesses have again people they also have locations. Um locations are you know
+3:363 minutes, 36 secondsused within the application to you know either as mailing addresses or destinations for shipment uh places to
+3:463 minutes, 46 secondsfabricate. If the uh if there's inventory related to that specific business, you can find it in here. And
+3:533 minutes, 53 secondsthen you'll also see uh you know as we we work with this either vendor or client relevant things uh like orders or
+4:024 minutes, 2 secondsbids or anything that we've done with or on behalf of that business will start appearing in this top
+4:094 minutes, 9 secondsmenu. Next area that we have is our our catalog. And for most users they're going to be consumers of catalog.
+4:164 minutes, 16 secondsThere's uh other videos that really dive into depth about you know setting up and organizing the catalog. you know, simply we have the ability to um you know, try
+4:244 minutes, 24 secondsto find things. So, just quickly quick search and our bike demo, see some information about our handlebars. These are items that are ready for purchase.
+4:324 minutes, 32 secondsUm you know, you can dive in and get a little bit more detail about the item specifics. Items also can have task,
+4:384 minutes, 38 secondsfiles, notes. Um and then we can dive into things like transactions. So, very great. Moving ahead, um we're going to actually enter into a project mode. Now,
+4:484 minutes, 48 secondsthis is the fun stuff. So um in this demo, we are a bike manufacturer and we are going to be purchasing our uh retail
+4:554 minutes, 55 secondsline of bicycles. So you know this is from a retail perspective. We're we're starting to manufacture 18 months out
+5:045 minutes, 4 secondsand um we need to move from the engineering design data by our our design teams and go all the way through
+5:125 minutes, 12 secondsthe process of competitive bidding and then ordering and you know moving uh raw materials through different fabrication
+5:205 minutes, 20 secondsand then ultimately down to our retail locations.
+5:255 minutes, 25 secondsQuickly working through the um the project menu at the top here. We have our our basic info about the project. You know, what are the core locations,
+5:335 minutes, 33 secondswhat are relevant key dates for the application, when are we starting, when are we ending. Um there's also a an audit log around what activities
+5:415 minutes, 41 secondsoccurred within the project. Um give you the full history and you can sort of dive in and get the specifics. We have our bill of
+5:485 minutes, 48 secondsmaterials. This is an area where you can import um engineering data, raw data. Um it's not essential, but it does provide
+5:565 minutes, 56 secondssome really cool functionality for more sophisticated users. Our project inventory also talks about, you know, everything that we
+6:046 minutes, 4 secondscurrently have in stock. Um summarizes sort of our plans, when things are coming in, and then diving in, we can get a little bit more specific
+6:126 minutes, 12 secondssurrounds, you know, if we've actually transacted on them. um where we've maybe bid on the products, any kind of
+6:206 minutes, 20 secondscompetitive bid pricing that we got um and when we've actually ordered things and you know sort of sky's is the limit in terms of drop down but you know in
+6:286 minutes, 28 secondsthis case we can see that we we purchased these um mountain bike tires.
+6:336 minutes, 33 secondsUm they're in the process of uh of you know being delivered to a location. We can sort of see what the plans the teams
+6:406 minutes, 40 secondsoutlied understand pricing all that cool stuff.
+6:466 minutes, 46 secondsin terms of you know core supply chain and procurement activities. Um you know starting point for the application is uh
+6:536 minutes, 53 secondsyou know the process of requisition. This is a an optional part
+7:007 minutesof the application but again for sophisticated users it's it's there and it's um you know ready to go from you know a long list of things that you need to buy to to achieve your goals. them,
+7:107 minutes, 10 secondsarrange them and partition them into logical groupings and then u from there potentially bid them out. So just quickly flipping through again there's a
+7:197 minutes, 19 secondslot of uh common concepts you'll start getting used to but we have uh key dates we have the ability to to group things and assign them um can assign things
+7:277 minutes, 27 secondslike cost codes and I'll flip over to the bill materials. So I think this is a good time to introduce a general concept of
+7:357 minutes, 35 secondsthe application in that our bill materials are split between four major types. The the one that most people are used to
+7:447 minutes, 44 secondshaving you know purchased to anything or plan for purchase is you know we're we're buying things through there's a purchase items area. Uh conceptually this these are the things that you're going to be paying your suppliers for.
+7:557 minutes, 55 secondsin you know more sophisticated uh purchasing environments there's also a concept of that you you might have to supply some inputs to the process
+8:048 minutes, 4 secondsespecially when you are fabricating or assembling um or a service is being rendered upon an item. So in this world,
+8:118 minutes, 11 secondsa client supplied item would correspond to inputs that you own that you've purchased in the past that you are going
+8:188 minutes, 18 secondsto provide to the vendor um as as part of their uh sorry to facilitate them
+8:268 minutes, 26 secondspreparing and giving you the purchase item. From there there's also vendor supplied items. Uh again sophisticated world there there's times where we note
+8:358 minutes, 35 secondswhat items we expect the vendor should build into their pricing. Not as relevant in the requisition world,
+8:418 minutes, 41 secondshighly relevant in the competitive bid and order perspective. And then finally, feed through. You know, in industry,
+8:488 minutes, 48 secondsthis be a good example would be bag and tagged or shiploose items that are uh merely, you know, moving through the pro process. Again, we uh we don't need it
+8:568 minutes, 56 secondsas much for the requisitions. There's a spot for it, but very relevant once we get to the bid and order stage. So, going from the requisitions,
+9:049 minutes, 4 secondsanother major concept is um sort of the chaining of things and like items. So,
+9:109 minutes, 10 secondsyou know, in this case, we're buying or we have a requisition for tubing. And,
+9:159 minutes, 15 secondsyou know, once that has been marked as ready to to bid, was transferred to a a bid, tubing bid. And then from there, we
+9:229 minutes, 22 secondsreceived a few different offers towards that bid. We did a split award and we turned it into an order. But without further ado, um we're going to dive into
+9:309 minutes, 30 secondsthe bid and I'll show you how to get there. You you could have e either clicked right on there. Another alternative is to go into our bids menu
+9:389 minutes, 38 secondsand then select the relevant bid. So in our bid um you know a lot of
+9:469 minutes, 46 secondsagain the the key things that we're starting to to get recognition on. Um there's key information, there's locations, uh dates and
+9:579 minutes, 57 secondsgroups. Clicked a little fast there. My computer is frozen.
+10:0510 minutes, 5 secondsuh dates in the system are highly flexible. Um we'll show in other videos how you can customize sort of what the default is for your team, but you also
+10:1410 minutes, 14 secondshave the ability to add ad hoc dates um as relevant uh for whatever you're doing. So, you know, simply I could
+10:2110 minutes, 21 secondsclick on a new date, select the type from either a predetermined white or do a custom date. So,
+10:3210 minutes, 32 secondsAnd away we go. Well, there's a lot to cover within
+10:4010 minutes, 40 secondsthis bid space. Just wanted to highlight some really cool features. So, one of them that we love is our comparison grid. This is the ability to really
+10:4810 minutes, 48 secondsvisualize um you know all the the feedback that we got from our um proponents as we went out to bid. The
+10:5610 minutes, 56 secondsability to drill down and see our custom evaluations that we did for this bid as well as you know we can rearrange visualize only single offers.
+11:0711 minutes, 7 secondsUm really powerful stuff when you have lots and lots of uh of proponents coming back. Um, from there you can also drill
+11:1411 minutes, 14 secondsinto a little bit more of the details about what we're being provided from each. Sometimes, you know, you ask for an apple, they come back with an
+11:2211 minutes, 22 secondsalternative like an orange um and, you know, trying to make sense of that. The system also ships with um pre-built uh
+11:3111 minutes, 31 secondsawesome PDF representation of all this data. You just got to click to generate. Another concept I wanted to highlight while we're here is the
+11:3911 minutes, 39 secondsability to uh subscribe and get notifications to changes within the application. So in this case, I have requested that I get browser
+11:4811 minutes, 48 secondsnotifications to any change within this bid, but I could just as easily switch that off and switch over to an email notification or nothing at
+11:5611 minutes, 56 secondsall. The icon here will sort of indicate what our our current setting is. Um, so we we know when you sorry when you log
+12:0512 minutes, 5 secondsin and and look at one of these things if you're going to be receiving notifications. You can opt in and opt out at any
+12:1112 minutes, 11 secondstime our files notes and everything. Finally, last major um
+12:1812 minutes, 18 secondsconcept I wanted to highlight here is uh our workflows. So the application has really robust workflows and for um for
+12:2712 minutes, 27 secondsour sophisticated customers there's the ability to customize these workflows and really sky's the limit.
+12:3412 minutes, 34 secondsUm who and when and how people can interact with the workflow is driven by their roles. We're going to hit that on
+12:4112 minutes, 41 secondsanother video as well, but it's important to know that within the application, you have both um roles within the projects that you're working
+12:5012 minutes, 50 secondson as well as the teams that you are a member of. Flipping back to our menu, I'm just
+12:5712 minutes, 57 secondsgoing to quickly go to an order to show you, you know, what that bid turned into. So, in this case, we have a tubing
+13:0413 minutes, 4 secondsorder. And again, a lot of very similar things. um you know these menus will change a little bit based on the context
+13:1113 minutes, 11 secondsthat we're working in. So you know as we've actually ordered something and there's money being transferred financials become really important. So getting a bit of a summary um want to highlight we do support multicurrency.
+13:2313 minutes, 23 secondsUm and you there's a concept of a project currency and then anything within it can have its own currencies and you have the ability to customize
+13:3113 minutes, 31 secondsand set your effective exchange rates on a per transaction basis.
+13:3913 minutes, 39 secondsSo, some of these menus are really useful for people who are, you know,
+13:4313 minutes, 43 secondsoccasional supply chain users. Um, the ability to dive in and get an appreciation for, you know, what a term means, um, I think is helpful.
+13:5213 minutes, 52 secondsSo, so within the order space, uh, we have our bill of materials that we're starting to get used to.
+13:5813 minutes, 58 secondsagain concept maybe to highlight while we're here is you know depending on your role within the process or what the activity you are doing today there might
+14:0714 minutes, 7 secondsbe you know a different need and different information that you would like to see so in here we've built out some contextual views so in this case
+14:1514 minutes, 15 secondsI'm looking at the financials so it's heavy on you know unit prices exchange rates currency um your cost coding we
+14:2314 minutes, 23 secondshave material control that you know helps us know great we're buying something but what are we doing with it?
+14:2814 minutes, 28 secondsHow is it going to be consumed downstream? You know, drill downs again allow me to dive right into the details
+14:3614 minutes, 36 secondsof this catalog item, get an appreciation for a little bit more of the um specifics. Um we can see inventory and
+14:4414 minutes, 44 secondsyou know how we've purchased things in the past here, tasks, files, as well as status updating on a per line basis within our
+14:5214 minutes, 52 secondspurchase order. So, you know, for our expediters, uh, we thought of you when we added this feature. Um, the ability to status update each individual line is
+15:0215 minutes, 2 secondsreally powerful. Material management is a really important part of executing
+15:0915 minutes, 9 secondscomplex projects. Making sure place items get to the right place at the right time. Current SEM uses a plan then
+15:1815 minutes, 18 secondsexecute approach. We are able to plan before the purchase order is even issued and then continuously monitor and then
+15:2615 minutes, 26 secondsfinally execute on those plans. We allow for you know multi-releases of the same item. Um plans are really easy to turn
+15:3515 minutes, 35 secondsinto actual actionable releases. Um and then we can also get the full history of the releases as as they actually happened.
+15:4315 minutes, 43 secondsExpediting T tab also allows our expediters to create their own important dates. You know, whether it be a a
+15:5015 minutes, 50 secondsmaterial inspection or uh something to that effect, your own status updates, um notes, files, and tasks. Um invoicing
+16:0016 minutesfor our project control teams. And then again, tasks.
+16:0616 minutes, 6 secondsWhat we love about tasks and actually attaching them to right to the PO or right to the bid is that it's really easy to dive in and get straight to work
+16:1416 minutes, 14 secondsand understand where we sit in the process. From a project management perspective, I wanted to highlight some uh some cool tools that the system has
+16:2316 minutes, 23 secondsto help you keep track of all these tasks that might be all over um the application. So, you know, jumping into our project reporting
+16:3016 minutes, 30 secondsview, we can get an appreciate for the status of all of our tasks. Um, we can drill and get the individual status of,
+16:3716 minutes, 37 secondsyou know, our our requisitions, our orders and our bids and just click to to follow and dive in is why is this still
+16:4416 minutes, 44 secondsin a draft state? We should be well beyond that. Gain appreciation for what we're planning to spend and what we've committed an invoice to date on the
+16:5216 minutes, 52 secondsproject. And then diving over into our dynamic reporting engine. This is probably my favorite part of the application. So far we've seen a lot of
+17:0117 minutes, 1 secondgreat interfaces for you know storing data, organizing it, keeping everyone um data structured, but then of course
+17:1017 minutes, 10 secondshow do we get the data out? How do we visualize? How do we bring it all together? So within the application there's a lot of um predefined starting
+17:1817 minutes, 18 secondspoints for reports and then you have the ability to easily customize to meet your exact specifications.
+17:2417 minutes, 24 secondsSo, I've opened up a an example order items report that sort of talks about each line of all of our POS within this
+17:3117 minutes, 31 secondsorder. And from there, I have the ability to do a couple really cool things. I can customize the view, drag and drop additional columns, and the the
+17:4017 minutes, 40 secondspage will automatically rerender with that data. I also have the ability to load existing views and that I've saved previously.
+17:5117 minutes, 51 secondsI can also pick up and share views that might have been shared with me by my team. What's great about this is that
+17:5917 minutes, 59 secondsevery stakeholder can create, save, and utilize their own views and their own ways of looking at the data. All the data is live. It's driven by the system.
+18:1118 minutes, 11 secondsThere's no spreadsheets to update. There's no crazy customization required.
+18:1618 minutes, 16 secondsIt's all individual driven. Easily export to Excel and PDF and you know focus more on the value
+18:2518 minutes, 25 secondscreation exercise and and less about you know re-entering data, organizing spreadsheets, all that nasty
+18:3218 minutes, 32 secondsstuff. Right. Awesome. The other things I just wanted to highlight um you know if you wanted to customize your own
+18:3918 minutes, 39 secondsprofile um you know perhaps log out of your devices you know heading over to your user hub is the place to
+18:4718 minutes, 47 secondsgo customizing teams if you are a team administrator. There's a lot of really cool customizations here. Um you know
+18:5418 minutes, 54 secondsassigning roles within the team. um setting out how we want to evaluate dates um actually importing data into the
+19:0219 minutes, 2 secondsapplication and then um our help area. So if you ever get lost um within the application, our help
+19:1019 minutes, 10 secondsis a really good place to start and you'll probably start noticing throughout the application if you look we have a lot of contextual help that will bring you right to sort of the relevant topic. So from our reports,
+19:2019 minutes, 20 secondsjust going to click in and we see sort of talks what you're looking at, what you're seeing, and then if I wanted to dive into it, I get right into our project reporting.
+19:2919 minutes, 29 secondsSo that was everything I wanted to cover today. Thanks for your time. I hope to see you soon.
