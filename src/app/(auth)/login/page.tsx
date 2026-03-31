@@ -1,47 +1,17 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: formData.get("email"),
-          password: formData.get("password"),
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        setLoading(false);
-        return;
-      }
-
-      // Full page navigation to pick up cookies from the response
-      window.location.href = "/dashboard";
-    } catch {
-      setError("An error occurred. Please try again.");
-      setLoading(false);
-    }
-  }
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
 
   return (
     <div className="rounded-xl border bg-card p-8 shadow-sm ring-1 ring-foreground/5">
@@ -57,7 +27,49 @@ export default function LoginPage() {
         Sign in to your account
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form
+        action={async (formData: FormData) => {
+          "use server";
+
+          const email = formData.get("email") as string;
+          const password = formData.get("password") as string;
+          const cookieStore = await cookies();
+
+          const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+              cookies: {
+                getAll() {
+                  return cookieStore.getAll();
+                },
+                setAll(cookiesToSet) {
+                  cookiesToSet.forEach(({ name, value, options }) =>
+                    cookieStore.set(name, value, {
+                      ...options,
+                      sameSite: "lax",
+                      secure: process.env.NODE_ENV === "production",
+                      path: "/",
+                    })
+                  );
+                },
+              },
+            }
+          );
+
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (error) {
+            redirect(`/login?error=${encodeURIComponent(error.message)}`);
+          }
+
+          redirect("/dashboard");
+        }}
+        className="mt-6 space-y-4"
+      >
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -88,8 +100,8 @@ export default function LoginPage() {
           </div>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Signing in..." : "Sign in"}
+        <Button type="submit" className="w-full">
+          Sign in
         </Button>
       </form>
 
