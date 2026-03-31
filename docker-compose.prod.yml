@@ -1,0 +1,216 @@
+# CuroSCM Production — Self-hosted Supabase on Hetzner
+# Runs alongside skysnags on the same VM, different ports
+# Supabase API: 127.0.0.1:8443 (Kong gateway)
+# Supabase Studio: 127.0.0.1:8444
+# Postgres: 127.0.0.1:5433 (not 5432 — skysnags uses that)
+
+services:
+  curoscm-db:
+    image: supabase/postgres:15.8.1.060
+    container_name: curoscm-db
+    restart: always
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: "5432"
+      POSTGRES_PORT: "5432"
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: ${JWT_EXPIRY:-3600}
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "work_mem=16MB"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    volumes:
+      - curoscm-pgdata:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d/migrations
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U supabase_admin -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  curoscm-auth:
+    image: supabase/gotrue:v2.170.0
+    container_name: curoscm-auth
+    restart: always
+    depends_on:
+      curoscm-db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@curoscm-db:5432/${POSTGRES_DB}
+      GOTRUE_SITE_URL: ${SITE_URL}
+      GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS}
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: ${JWT_EXPIRY:-3600}
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-noreply@curoscm.com}
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-CuroSCM}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  curoscm-rest:
+    image: postgrest/postgrest:v12.2.3
+    container_name: curoscm-rest
+    restart: always
+    depends_on:
+      curoscm-db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@curoscm-db:5432/${POSTGRES_DB}
+      PGRST_DB_SCHEMAS: public,storage,graphql_public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY:-3600}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  curoscm-realtime:
+    image: supabase/realtime:v2.33.70
+    container_name: curoscm-realtime
+    restart: always
+    depends_on:
+      curoscm-db:
+        condition: service_healthy
+    environment:
+      PORT: "4000"
+      DB_HOST: curoscm-db
+      DB_PORT: "5432"
+      DB_USER: supabase_admin
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
+      DB_ENC_KEY: supabaserealtime
+      API_JWT_SECRET: ${JWT_SECRET}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-ChangeThisToALongRandomStringAtLeast64Characters1234567890abcdefgh}
+      ERL_AFLAGS: "-proto_dist inet_tcp"
+      DNS_NODES: "''"
+      RLIMIT_NOFILE: "10000"
+      APP_NAME: realtime
+      SEED_SELF_HOST: "true"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  curoscm-storage:
+    image: supabase/storage-api:v1.14.3
+    container_name: curoscm-storage
+    restart: always
+    depends_on:
+      curoscm-db:
+        condition: service_healthy
+    environment:
+      ANON_KEY: ${ANON_KEY}
+      SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      POSTGREST_URL: http://curoscm-rest:3000
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@curoscm-db:5432/${POSTGRES_DB}
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      REGION: us-east-1
+      GLOBAL_S3_BUCKET: stub
+      IS_MULTITENANT: "false"
+    volumes:
+      - curoscm-storage:/var/lib/storage
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  curoscm-kong:
+    image: kong:2.8.1
+    container_name: curoscm-kong
+    restart: always
+    ports:
+      - "127.0.0.1:8443:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+    volumes:
+      - ./docker/kong.yml:/var/lib/kong/kong.yml:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  curoscm-studio:
+    image: supabase/studio:20241202-4c26545
+    container_name: curoscm-studio
+    restart: always
+    ports:
+      - "127.0.0.1:8444:3000"
+    environment:
+      STUDIO_PG_META_URL: http://curoscm-meta:8080
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DEFAULT_ORGANIZATION_NAME: CuroSCM
+      DEFAULT_PROJECT_NAME: CuroSCM
+      SUPABASE_URL: http://curoscm-kong:8000
+      SUPABASE_PUBLIC_URL: ${API_EXTERNAL_URL}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  curoscm-meta:
+    image: supabase/postgres-meta:v0.84.2
+    container_name: curoscm-meta
+    restart: always
+    environment:
+      PG_META_PORT: "8080"
+      PG_META_DB_HOST: curoscm-db
+      PG_META_DB_PORT: "5432"
+      PG_META_DB_NAME: ${POSTGRES_DB}
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+volumes:
+  curoscm-pgdata:
+  curoscm-storage:

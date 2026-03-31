@@ -1,0 +1,69 @@
+name: Deploy Backend to Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "docker-compose.prod.yml"
+      - "docker/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Hetzner VM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.CUROSCM_VM_HOST }}
+          username: ${{ secrets.CUROSCM_VM_USER }}
+          key: ${{ secrets.CUROSCM_VM_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd /opt/curoscm/app
+
+            # Pull latest code
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Generate Kong config with real keys
+            sed -e "s|ANON_KEY_PLACEHOLDER|$(grep ANON_KEY .env | cut -d= -f2)|g" \
+                -e "s|SERVICE_ROLE_KEY_PLACEHOLDER|$(grep SERVICE_ROLE_KEY .env | cut -d= -f2)|g" \
+                docker/kong.yml > docker/kong.generated.yml
+            cp docker/kong.generated.yml docker/kong.yml
+
+            # Build and deploy
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --force-recreate
+
+            # Wait for database to be healthy
+            echo "Waiting for database..."
+            for i in $(seq 1 30); do
+              if docker exec curoscm-db pg_isready -U supabase_admin -h localhost > /dev/null 2>&1; then
+                echo "Database is healthy!"
+                break
+              fi
+              echo "Attempt $i/30 — waiting 5s..."
+              sleep 5
+            done
+
+            # Run migrations
+            echo "Running database migrations..."
+            for f in supabase/migrations/*.sql; do
+              echo "Applying $f..."
+              docker exec -i curoscm-db psql -U supabase_admin -d curoscm < "$f" 2>&1 || true
+            done
+
+            # Verify services
+            echo "Checking services..."
+            docker ps --filter "name=curoscm-" --format "{{.Names}}: {{.Status}}"
+
+            echo "Deployment complete!"
