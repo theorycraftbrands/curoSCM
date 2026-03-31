@@ -170,12 +170,15 @@ services:
       KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      KONG_NGINX_WORKER_PROCESSES: "1"
     volumes:
       - ./docker/kong.yml:/var/lib/kong/kong.yml:ro
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
+        reservations:
+          memory: 128M
 
   curoscm-studio:
     image: supabase/studio:latest
