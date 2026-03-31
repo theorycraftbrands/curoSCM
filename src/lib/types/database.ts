@@ -82,6 +82,311 @@ export type Database = {
           },
         ]
       }
+      bid_evaluations: {
+        Row: {
+          bid_id: string
+          created_at: string
+          criteria_name: string
+          evaluated_by: string
+          id: string
+          max_score: number | null
+          notes: string | null
+          proponent_id: string
+          score: number | null
+        }
+        Insert: {
+          bid_id: string
+          created_at?: string
+          criteria_name: string
+          evaluated_by: string
+          id?: string
+          max_score?: number | null
+          notes?: string | null
+          proponent_id: string
+          score?: number | null
+        }
+        Update: {
+          bid_id?: string
+          created_at?: string
+          criteria_name?: string
+          evaluated_by?: string
+          id?: string
+          max_score?: number | null
+          notes?: string | null
+          proponent_id?: string
+          score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_evaluations_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_evaluations_evaluated_by_fkey"
+            columns: ["evaluated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_evaluations_proponent_id_fkey"
+            columns: ["proponent_id"]
+            isOneToOne: false
+            referencedRelation: "bid_proponents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bid_items: {
+        Row: {
+          bid_id: string
+          bom_type: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id: string | null
+          created_at: string
+          description: string
+          id: string
+          organization_id: string
+          quantity: number
+          requisition_item_id: string | null
+          sort_order: number | null
+          unit: string | null
+        }
+        Insert: {
+          bid_id: string
+          bom_type?: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          organization_id: string
+          quantity?: number
+          requisition_item_id?: string | null
+          sort_order?: number | null
+          unit?: string | null
+        }
+        Update: {
+          bid_id?: string
+          bom_type?: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          organization_id?: string
+          quantity?: number
+          requisition_item_id?: string | null
+          sort_order?: number | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_items_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_items_requisition_item_id_fkey"
+            columns: ["requisition_item_id"]
+            isOneToOne: false
+            referencedRelation: "requisition_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bid_proponents: {
+        Row: {
+          bid_id: string
+          business_id: string
+          id: string
+          invited_at: string
+          is_recommended: boolean
+          responded_at: string | null
+          status: Database["public"]["Enums"]["bid_proponent_status"]
+        }
+        Insert: {
+          bid_id: string
+          business_id: string
+          id?: string
+          invited_at?: string
+          is_recommended?: boolean
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["bid_proponent_status"]
+        }
+        Update: {
+          bid_id?: string
+          business_id?: string
+          id?: string
+          invited_at?: string
+          is_recommended?: boolean
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["bid_proponent_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_proponents_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_proponents_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bid_responses: {
+        Row: {
+          bid_item_id: string
+          created_at: string
+          currency: string | null
+          id: string
+          is_compliant: boolean | null
+          lead_time_days: number | null
+          notes: string | null
+          offered_item_name: string | null
+          proponent_id: string
+          unit_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          bid_item_id: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          is_compliant?: boolean | null
+          lead_time_days?: number | null
+          notes?: string | null
+          offered_item_name?: string | null
+          proponent_id: string
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bid_item_id?: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          is_compliant?: boolean | null
+          lead_time_days?: number | null
+          notes?: string | null
+          offered_item_name?: string | null
+          proponent_id?: string
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_responses_bid_item_id_fkey"
+            columns: ["bid_item_id"]
+            isOneToOne: false
+            referencedRelation: "bid_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_responses_proponent_id_fkey"
+            columns: ["proponent_id"]
+            isOneToOne: false
+            referencedRelation: "bid_proponents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bids: {
+        Row: {
+          bid_number: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          name: string
+          organization_id: string
+          project_id: string
+          requisition_id: string | null
+          status: Database["public"]["Enums"]["bid_status"]
+          updated_at: string
+        }
+        Insert: {
+          bid_number?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          project_id: string
+          requisition_id?: string | null
+          status?: Database["public"]["Enums"]["bid_status"]
+          updated_at?: string
+        }
+        Update: {
+          bid_number?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          project_id?: string
+          requisition_id?: string | null
+          status?: Database["public"]["Enums"]["bid_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_requisition_id_fkey"
+            columns: ["requisition_id"]
+            isOneToOne: false
+            referencedRelation: "requisitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bom_items: {
         Row: {
           bom_type: Database["public"]["Enums"]["bom_item_type"]
@@ -825,6 +1130,141 @@ export type Database = {
           },
         ]
       }
+      requisition_items: {
+        Row: {
+          bom_item_id: string | null
+          catalog_item_id: string | null
+          cost_code: string | null
+          created_at: string
+          description: string
+          group_name: string | null
+          id: string
+          organization_id: string
+          quantity: number
+          requisition_id: string
+          sort_order: number | null
+          unit: string | null
+        }
+        Insert: {
+          bom_item_id?: string | null
+          catalog_item_id?: string | null
+          cost_code?: string | null
+          created_at?: string
+          description: string
+          group_name?: string | null
+          id?: string
+          organization_id: string
+          quantity?: number
+          requisition_id: string
+          sort_order?: number | null
+          unit?: string | null
+        }
+        Update: {
+          bom_item_id?: string | null
+          catalog_item_id?: string | null
+          cost_code?: string | null
+          created_at?: string
+          description?: string
+          group_name?: string | null
+          id?: string
+          organization_id?: string
+          quantity?: number
+          requisition_id?: string
+          sort_order?: number | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requisition_items_bom_item_id_fkey"
+            columns: ["bom_item_id"]
+            isOneToOne: false
+            referencedRelation: "bom_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requisition_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requisition_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requisition_items_requisition_id_fkey"
+            columns: ["requisition_id"]
+            isOneToOne: false
+            referencedRelation: "requisitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      requisitions: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          project_id: string
+          requisition_number: string | null
+          status: Database["public"]["Enums"]["requisition_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          project_id: string
+          requisition_number?: string | null
+          status?: Database["public"]["Enums"]["requisition_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          project_id?: string
+          requisition_number?: string | null
+          status?: Database["public"]["Enums"]["requisition_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requisitions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requisitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requisitions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assigned_to: string | null
@@ -993,6 +1433,15 @@ export type Database = {
       user_is_org_admin: { Args: { p_org_id: string }; Returns: boolean }
     }
     Enums: {
+      bid_proponent_status: "invited" | "responded" | "declined" | "no_response"
+      bid_status:
+        | "draft"
+        | "issued"
+        | "awaiting_review"
+        | "awaiting_approval"
+        | "ready_to_issue"
+        | "awarded"
+        | "cancelled"
       bom_item_type:
         | "purchase"
         | "client_supplied"
@@ -1013,6 +1462,12 @@ export type Database = {
         | "office"
       project_role: "manager" | "buyer" | "expediter" | "viewer"
       project_status: "draft" | "active" | "on_hold" | "complete" | "cancelled"
+      requisition_status:
+        | "draft"
+        | "under_review"
+        | "ready_to_bid"
+        | "transferred"
+        | "cancelled"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "open" | "in_progress" | "complete" | "cancelled"
       team_role: "owner" | "admin" | "member" | "viewer"
@@ -1146,6 +1601,16 @@ export const Constants = {
   },
   public: {
     Enums: {
+      bid_proponent_status: ["invited", "responded", "declined", "no_response"],
+      bid_status: [
+        "draft",
+        "issued",
+        "awaiting_review",
+        "awaiting_approval",
+        "ready_to_issue",
+        "awarded",
+        "cancelled",
+      ],
       bom_item_type: [
         "purchase",
         "client_supplied",
@@ -1169,6 +1634,13 @@ export const Constants = {
       ],
       project_role: ["manager", "buyer", "expediter", "viewer"],
       project_status: ["draft", "active", "on_hold", "complete", "cancelled"],
+      requisition_status: [
+        "draft",
+        "under_review",
+        "ready_to_bid",
+        "transferred",
+        "cancelled",
+      ],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["open", "in_progress", "complete", "cancelled"],
       team_role: ["owner", "admin", "member", "viewer"],

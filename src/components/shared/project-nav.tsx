@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Info, ClipboardList, FileText, Package, BarChart3 } from "lucide-react";
+import { Info, ClipboardList, FileText, Package, BarChart3, Gavel, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProjectNavProps {
@@ -13,9 +13,9 @@ const navItems = [
   { label: "Overview", href: "", icon: Info },
   { label: "Bill of Materials", href: "/bom", icon: ClipboardList },
   { label: "Inventory", href: "/inventory", icon: Package },
-  { label: "Requisitions", href: "/requisitions", icon: FileText, disabled: true },
-  { label: "Bids", href: "/bids", icon: FileText, disabled: true },
-  { label: "Orders", href: "/orders", icon: FileText, disabled: true },
+  { label: "Requisitions", href: "/requisitions", icon: FileText },
+  { label: "Bids", href: "/bids", icon: Gavel },
+  { label: "Orders", href: "/orders", icon: ShoppingCart, disabled: true },
   { label: "Reports", href: "/reports", icon: BarChart3, disabled: true },
 ];
 
