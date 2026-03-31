@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
+import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface ProjectEditFormProps {
   project: {
@@ -18,7 +19,6 @@ interface ProjectEditFormProps {
     start_date: string | null;
     end_date: string | null;
   };
-  close: () => void;
 }
 
 const statuses = [
@@ -29,7 +29,8 @@ const statuses = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-export function ProjectEditForm({ project, close }: ProjectEditFormProps) {
+export function ProjectEditForm({ project }: ProjectEditFormProps) {
+  const { close } = useEditSheet();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

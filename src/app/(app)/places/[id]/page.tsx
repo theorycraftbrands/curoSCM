@@ -45,7 +45,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <Badge variant="outline" className="capitalize">{location.location_type}</Badge>
             <Badge variant={location.is_active ? "secondary" : "outline"}>{location.is_active ? "Active" : "Inactive"}</Badge>
             <EditSheet title="Edit Location">
-              {({ close }) => <LocationEditForm location={location} businesses={businesses ?? []} close={close} />}
+              <LocationEditForm location={location} businesses={businesses ?? []} />
             </EditSheet>
           </div>
         </div>

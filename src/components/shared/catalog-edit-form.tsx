@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/lib/supabase/client";
+import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface CatalogEditFormProps {
   item: {
@@ -22,10 +23,10 @@ interface CatalogEditFormProps {
     is_purchasable: boolean;
     is_active: boolean;
   };
-  close: () => void;
 }
 
-export function CatalogEditForm({ item, close }: CatalogEditFormProps) {
+export function CatalogEditForm({ item }: CatalogEditFormProps) {
+  const { close } = useEditSheet();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

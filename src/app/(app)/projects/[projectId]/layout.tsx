@@ -77,7 +77,7 @@ export default async function ProjectLayout({
               )}
             </div>
             <EditSheet title="Edit Project">
-              {({ close }) => <ProjectEditForm project={project} close={close} />}
+              <ProjectEditForm project={project} />
             </EditSheet>
           </div>
         </div>

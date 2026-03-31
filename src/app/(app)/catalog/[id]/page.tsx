@@ -38,7 +38,7 @@ export default async function CatalogItemDetailPage({ params }: { params: Promis
             </Badge>
             {!item.is_active && <Badge variant="outline">Inactive</Badge>}
             <EditSheet title="Edit Catalog Item">
-              {({ close }) => <CatalogEditForm item={item} close={close} />}
+              <CatalogEditForm item={item} />
             </EditSheet>
           </div>
         </div>

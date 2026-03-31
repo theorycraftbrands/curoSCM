@@ -64,7 +64,7 @@ export default async function BusinessDetailPage({
               {business.is_active ? "Active" : "Inactive"}
             </Badge>
             <EditSheet title="Edit Business">
-              {({ close }) => <BusinessEditForm business={business} close={close} />}
+              <BusinessEditForm business={business} />
             </EditSheet>
           </div>
         </div>

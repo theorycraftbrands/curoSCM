@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface BusinessEditFormProps {
   business: {
@@ -21,7 +22,6 @@ interface BusinessEditFormProps {
     timezone: string | null;
     is_active: boolean;
   };
-  close: () => void;
 }
 
 const businessTypes = [
@@ -44,7 +44,8 @@ const timezones = [
   "UTC",
 ];
 
-export function BusinessEditForm({ business, close }: BusinessEditFormProps) {
+export function BusinessEditForm({ business }: BusinessEditFormProps) {
+  const { close } = useEditSheet();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

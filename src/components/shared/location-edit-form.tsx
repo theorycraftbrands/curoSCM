@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/lib/supabase/client";
+import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface LocationEditFormProps {
   location: {
@@ -23,12 +24,12 @@ interface LocationEditFormProps {
     business_id: string | null;
   };
   businesses: Array<{ id: string; name: string }>;
-  close: () => void;
 }
 
 const locationTypes = ["mailing", "shipping", "fabrication", "warehouse", "office"];
 
-export function LocationEditForm({ location, businesses, close }: LocationEditFormProps) {
+export function LocationEditForm({ location, businesses }: LocationEditFormProps) {
+  const { close } = useEditSheet();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

@@ -88,13 +88,10 @@ export default async function PersonDetailPage({
               {person.is_active ? "Active" : "Inactive"}
             </Badge>
             <EditSheet title="Edit Person">
-              {({ close }) => (
-                <PersonEditForm
-                  person={person}
-                  businesses={businesses ?? []}
-                  close={close}
-                />
-              )}
+              <PersonEditForm
+                person={person}
+                businesses={businesses ?? []}
+              />
             </EditSheet>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/lib/supabase/client";
+import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface PersonEditFormProps {
   person: {
@@ -22,10 +23,10 @@ interface PersonEditFormProps {
     business_id: string | null;
   };
   businesses: Array<{ id: string; name: string }>;
-  close: () => void;
 }
 
-export function PersonEditForm({ person, businesses, close }: PersonEditFormProps) {
+export function PersonEditForm({ person, businesses }: PersonEditFormProps) {
+  const { close } = useEditSheet();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(person.is_active);

@@ -1,13 +1,18 @@
 "use client";
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
+
+const EditSheetContext = createContext<{ close: () => void }>({ close: () => {} });
+
+export function useEditSheet() {
+  return useContext(EditSheetContext);
+}
 
 interface EditSheetProps {
   title: string;
-  children: (props: { close: () => void }) => React.ReactNode;
+  children: React.ReactNode;
 }
 
 export function EditSheet({ title, children }: EditSheetProps) {
@@ -24,7 +29,9 @@ export function EditSheet({ title, children }: EditSheetProps) {
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
         <div className="mt-6">
-          {children({ close: () => setOpen(false) })}
+          <EditSheetContext.Provider value={{ close: () => setOpen(false) }}>
+            {children}
+          </EditSheetContext.Provider>
         </div>
       </SheetContent>
     </Sheet>
