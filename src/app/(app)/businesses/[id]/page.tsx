@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Phone, Globe, FileText, Users, MapPin, Clock, Building2 } from "lucide-react";
+import { ArrowLeft, Users, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { requireOnboarded } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -78,51 +78,60 @@ export default async function BusinessDetailPage({
         tasks={tasks ?? []}
       >
         <div className="space-y-6">
-          {/* Business Information Card */}
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold">Business Information</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Phone</p>
-                  {business.phone ? (
-                    <p className="text-sm font-mono">{business.phone}</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Globe className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Website</p>
-                  {business.website ? (
-                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">{business.website}</a>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Tax Reference</p>
-                  {business.tax_reference ? (
-                    <p className="text-sm font-mono">{business.tax_reference}</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Timezone</p>
-                  <p className="text-sm">{business.timezone?.replace("_", " ") || "UTC"}</p>
-                </div>
-              </div>
-            </div>
+          {/* Business Information — dense table */}
+          <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <tbody className="divide-y">
+                <tr>
+                  <td className="px-4 py-2.5 w-40 text-muted-foreground bg-muted/30 font-medium">Business Name</td>
+                  <td className="px-4 py-2.5">{business.name}</td>
+                </tr>
+                {business.legal_name && business.legal_name !== business.name && (
+                  <tr>
+                    <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Legal Name</td>
+                    <td className="px-4 py-2.5">{business.legal_name}</td>
+                  </tr>
+                )}
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Type</td>
+                  <td className="px-4 py-2.5">
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${typeColors[business.business_type] || typeColors.other}`}>
+                      {business.business_type}
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Phone</td>
+                  <td className="px-4 py-2.5">{business.phone ? <span className="font-mono text-xs">{business.phone}</span> : <span className="text-muted-foreground/40">—</span>}</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Website</td>
+                  <td className="px-4 py-2.5">
+                    {business.website ? <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">{business.website}</a> : <span className="text-muted-foreground/40">—</span>}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Tax Reference</td>
+                  <td className="px-4 py-2.5">{business.tax_reference ? <span className="font-mono text-xs">{business.tax_reference}</span> : <span className="text-muted-foreground/40">—</span>}</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Timezone</td>
+                  <td className="px-4 py-2.5">{business.timezone?.replace("_", " ") || "UTC"}</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Status</td>
+                  <td className="px-4 py-2.5"><Badge variant={business.is_active ? "secondary" : "outline"}>{business.is_active ? "Active" : "Inactive"}</Badge></td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Created</td>
+                  <td className="px-4 py-2.5 text-muted-foreground text-xs font-mono tabular-nums">{new Date(business.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Last Updated</td>
+                  <td className="px-4 py-2.5 text-muted-foreground text-xs font-mono tabular-nums">{new Date(business.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           {/* People */}
@@ -192,20 +201,6 @@ export default async function BusinessDetailPage({
             )}
           </div>
 
-          {/* Record Details */}
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold">Record Details</h2>
-            <div className="grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5" />
-                Created {new Date(business.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5" />
-                Updated {new Date(business.updated_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-              </div>
-            </div>
-          </div>
         </div>
       </EntityTabs>
     </div>

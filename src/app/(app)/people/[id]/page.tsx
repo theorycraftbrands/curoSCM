@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Mail, Phone, MapPin, Building2, Briefcase, Clock } from "lucide-react";
+import { ArrowLeft, Building2, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { requireOnboarded } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -104,77 +104,72 @@ export default async function PersonDetailPage({
         notes={notes ?? []}
         tasks={tasks ?? []}
       >
-        <div className="space-y-6">
-          {/* Contact Information Card */}
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold">Contact Information</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Email</p>
+        {/* Dense data table layout */}
+        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+          <table className="w-full text-sm">
+            <tbody className="divide-y">
+              <tr>
+                <td className="px-4 py-2.5 w-40 text-muted-foreground bg-muted/30 font-medium">First Name</td>
+                <td className="px-4 py-2.5">{person.first_name}</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Last Name</td>
+                <td className="px-4 py-2.5">{person.last_name}</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Email</td>
+                <td className="px-4 py-2.5">
                   {person.email ? (
-                    <a href={`mailto:${person.email}`} className="text-sm font-mono hover:text-primary transition-colors">
-                      {person.email}
-                    </a>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Phone</p>
-                  {person.phone ? (
-                    <p className="text-sm font-mono">{person.phone}</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">City</p>
-                  {person.city ? (
-                    <p className="text-sm">{person.city}</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground/50">Not provided</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                <Briefcase className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Role / Department</p>
-                  <p className="text-sm">
-                    {[person.role, person.department].filter(Boolean).join(" · ") || (
-                      <span className="text-muted-foreground/50">Not provided</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Metadata Card */}
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold">Record Details</h2>
-            <div className="grid gap-3 sm:grid-cols-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                Created {new Date(person.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                Updated {new Date(person.updated_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-              </div>
-            </div>
-          </div>
+                    <a href={`mailto:${person.email}`} className="font-mono text-xs hover:text-primary transition-colors">{person.email}</a>
+                  ) : <span className="text-muted-foreground/40">—</span>}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Phone</td>
+                <td className="px-4 py-2.5">
+                  {person.phone ? <span className="font-mono text-xs">{person.phone}</span> : <span className="text-muted-foreground/40">—</span>}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Business</td>
+                <td className="px-4 py-2.5">
+                  {person.business ? (
+                    <Link href={`/businesses/${person.business.id}`} className="hover:text-primary transition-colors">{person.business.name}</Link>
+                  ) : <span className="text-muted-foreground/40">—</span>}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Role</td>
+                <td className="px-4 py-2.5">{person.role || <span className="text-muted-foreground/40">—</span>}</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Department</td>
+                <td className="px-4 py-2.5">{person.department || <span className="text-muted-foreground/40">—</span>}</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">City</td>
+                <td className="px-4 py-2.5">{person.city || <span className="text-muted-foreground/40">—</span>}</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Status</td>
+                <td className="px-4 py-2.5">
+                  <Badge variant={person.is_active ? "secondary" : "outline"}>{person.is_active ? "Active" : "Inactive"}</Badge>
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Created</td>
+                <td className="px-4 py-2.5 text-muted-foreground text-xs font-mono tabular-nums">
+                  {new Date(person.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-muted-foreground bg-muted/30 font-medium">Last Updated</td>
+                <td className="px-4 py-2.5 text-muted-foreground text-xs font-mono tabular-nums">
+                  {new Date(person.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </EntityTabs>
     </div>
