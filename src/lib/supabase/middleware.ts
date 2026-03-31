@@ -1,49 +1,14 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, {
-              ...options,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-            })
-          );
-        },
-      },
-    }
+  // Check for auth cookie existence — don't call the Supabase API from middleware.
+  // The actual token validation happens in page server components via getUser().
+  // This avoids latency and connectivity issues between Vercel edge and the self-hosted Supabase.
+  const hasAuthCookie = request.cookies.getAll().some(
+    (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
   );
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  // Debug: log auth result in production
-  if (authError) {
-    console.log("[middleware] auth error:", authError.message, "path:", request.nextUrl.pathname);
-  }
-
-  // Auth page paths (no sidebar, accessible without auth or during onboarding)
+  // Auth page paths
   const isAuthPage = request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup") ||
     request.nextUrl.pathname.startsWith("/invite") ||
@@ -51,7 +16,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/api/auth");
 
   // Redirect unauthenticated users to login (except auth pages)
-  if (!user && !isAuthPage) {
+  if (!hasAuthCookie && !isAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
@@ -61,11 +26,11 @@ export async function updateSession(request: NextRequest) {
   const isLoginOrSignup = request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup");
 
-  if (user && isLoginOrSignup) {
+  if (hasAuthCookie && isLoginOrSignup) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  return NextResponse.next();
 }
