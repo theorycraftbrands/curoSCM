@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { createClient } from "@/lib/supabase/client";
 import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface PersonEditFormProps {
@@ -35,18 +34,19 @@ export function PersonEditForm({ person, businesses }: PersonEditFormProps) {
     setLoading(true);
     setError(null);
 
-    // Handle active toggle separately
-    const supabase = createClient();
-    if (isActive !== person.is_active) {
-      await supabase.from("people").update({ is_active: isActive }).eq("id", person.id);
-    }
+    formData.set("isActive", String(isActive));
 
-    const result = await updatePerson(person.id, formData);
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await updatePerson(person.id, formData);
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+      } else {
+        close();
+      }
+    } catch {
+      setError("Network error — could not save. Please try again.");
       setLoading(false);
-    } else {
-      close();
     }
   }
 

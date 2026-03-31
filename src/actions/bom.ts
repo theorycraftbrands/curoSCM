@@ -63,6 +63,17 @@ export async function updateBomItem(
   return { success: true };
 }
 
+export async function fetchBomItems(projectId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("bom_items")
+    .select("id, description, quantity, unit, bom_type, cost_code, group_name")
+    .eq("project_id", projectId)
+    .order("bom_type")
+    .order("description");
+  return data ?? [];
+}
+
 export async function deleteBomItem(itemId: string, projectId: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("bom_items").delete().eq("id", itemId);

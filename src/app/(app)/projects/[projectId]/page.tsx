@@ -1,43 +1,18 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/server";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { createClient } from "@/lib/supabase/client";
 import { Info, MapPin, Calendar, Activity } from "lucide-react";
 
-interface Project {
-  id: string;
-  project_number: string | null;
-  name: string;
-  description: string | null;
-  status: string;
-  currency: string;
-  start_date: string | null;
-  end_date: string | null;
-  created_at: string;
-  updated_at: string;
-}
+export default async function ProjectOverviewPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  const supabase = await createClient();
 
-interface Member {
-  id: string;
-  role: string;
-  profile: { full_name: string | null } | null;
-}
+  const [{ data: project }, { data: members }] = await Promise.all([
+    supabase.from("projects").select("*").eq("id", projectId).single(),
+    supabase.from("project_memberships").select("*, profile:profiles(full_name)").eq("project_id", projectId),
+  ]);
 
-export default function ProjectOverviewPage() {
-  const { projectId } = useParams<{ projectId: string }>();
-  const [project, setProject] = useState<Project | null>(null);
-  const [members, setMembers] = useState<Member[]>([]);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.from("projects").select("*").eq("id", projectId).single().then(({ data }) => setProject(data));
-    supabase.from("project_memberships").select("*, profile:profiles(full_name)").eq("project_id", projectId).then(({ data }) => setMembers((data as Member[]) ?? []));
-  }, [projectId]);
-
-  if (!project) return null;
+  if (!project) return <div className="py-16 text-center text-muted-foreground">Project not found</div>;
 
   return (
     <Tabs defaultValue="information" className="w-full">
@@ -90,9 +65,9 @@ export default function ProjectOverviewPage() {
         {/* Team Members */}
         <div className="mt-6 rounded-xl border bg-card shadow-sm overflow-hidden">
           <div className="px-4 py-3 bg-muted/30 border-b">
-            <h3 className="text-sm font-semibold">Team Members ({members.length})</h3>
+            <h3 className="text-sm font-semibold">Team Members ({members?.length ?? 0})</h3>
           </div>
-          {members.length === 0 ? (
+          {!members || members.length === 0 ? (
             <div className="px-4 py-6 text-center text-sm text-muted-foreground">No team members assigned</div>
           ) : (
             <table className="w-full text-sm">
@@ -103,7 +78,7 @@ export default function ProjectOverviewPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {members.map((m) => (
+                {members.map((m: { id: string; role: string; profile: { full_name: string | null } | null }) => (
                   <tr key={m.id} className="hover:bg-muted/10">
                     <td className="px-4 py-2">{m.profile?.full_name || "Unknown"}</td>
                     <td className="px-4 py-2"><Badge variant="outline" className="capitalize text-xs">{m.role}</Badge></td>

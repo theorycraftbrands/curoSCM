@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createClient } from "@/lib/supabase/client";
+import { updateBusiness } from "@/actions/businesses";
 import { useRouter } from "next/navigation";
 import { useEditSheet } from "@/components/shared/edit-sheet";
 
@@ -58,28 +58,24 @@ export function BusinessEditForm({ business }: BusinessEditFormProps) {
     setError(null);
 
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
 
-    const { error: err } = await supabase
-      .from("businesses")
-      .update({
+    try {
+      const result = await updateBusiness(business.id, {
         name: form.get("name") as string,
         legal_name: (form.get("legalName") as string) || null,
-        business_type: selectedType as "client" | "vendor" | "fabricator" | "carrier" | "storage" | "other",
+        business_type: selectedType,
         tax_reference: (form.get("taxReference") as string) || null,
         phone: (form.get("phone") as string) || null,
         website: (form.get("website") as string) || null,
         timezone: (form.get("timezone") as string) || "UTC",
         is_active: isActive,
-      })
-      .eq("id", business.id);
+      });
 
-    if (err) {
-      setError(err.message);
+      if (result?.error) { setError(result.error); setLoading(false); }
+      else { router.refresh(); close(); }
+    } catch {
+      setError("Network error — could not save. Please try again.");
       setLoading(false);
-    } else {
-      router.refresh();
-      close();
     }
   }
 

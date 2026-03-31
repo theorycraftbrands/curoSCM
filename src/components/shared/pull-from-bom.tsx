@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { pullFromBom } from "@/actions/requisitions";
+import { fetchBomItems } from "@/actions/bom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ClipboardList, Package } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 interface BomItem {
   id: string;
@@ -41,17 +41,10 @@ export function PullFromBom({ requisitionId, projectId }: PullFromBomProps) {
   useEffect(() => {
     if (!open) return;
     setFetching(true);
-    const supabase = createClient();
-    supabase
-      .from("bom_items")
-      .select("id, description, quantity, unit, bom_type, cost_code, group_name")
-      .eq("project_id", projectId)
-      .order("bom_type")
-      .order("description")
-      .then(({ data }) => {
-        setBomItems(data ?? []);
-        setFetching(false);
-      });
+    fetchBomItems(projectId).then((data) => {
+      setBomItems(data as BomItem[]);
+      setFetching(false);
+    });
   }, [open, projectId]);
 
   function toggleItem(id: string) {

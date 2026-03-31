@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getSessionUser } from "@/lib/auth/session";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Database } from "@/lib/types/database";
 
@@ -33,4 +34,41 @@ export async function createLocation(formData: FormData) {
 
   if (error) return { error: error.message };
   redirect(`/places/${data.id}`);
+}
+
+export async function updateLocation(
+  id: string,
+  data: {
+    name: string;
+    location_type: string;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    city?: string | null;
+    state_province?: string | null;
+    postal_code?: string | null;
+    country?: string | null;
+    business_id?: string | null;
+    is_active: boolean;
+  }
+) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("locations")
+    .update({
+      name: data.name,
+      location_type: data.location_type as LocationType,
+      address_line_1: data.address_line_1 ?? null,
+      address_line_2: data.address_line_2 ?? null,
+      city: data.city ?? null,
+      state_province: data.state_province ?? null,
+      postal_code: data.postal_code ?? null,
+      country: data.country ?? null,
+      business_id: data.business_id ?? null,
+      is_active: data.is_active,
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/places/${id}`);
+  return { success: true };
 }

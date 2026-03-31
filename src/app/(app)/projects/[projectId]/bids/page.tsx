@@ -1,13 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Gavel } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { createBid } from "@/actions/bids";
-import { createClient } from "@/lib/supabase/client";
+import { Gavel } from "lucide-react";
+import { CreateBidForm } from "./create-form";
 
 const statusColors: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
@@ -19,26 +13,15 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-destructive/10 text-destructive",
 };
 
-export default function BidsPage() {
-  const { projectId } = useParams<{ projectId: string }>();
-  const [bids, setBids] = useState<Array<{
-    id: string; bid_number: string; name: string; status: string; due_date: string | null; created_at: string;
-  }>>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default async function BidsPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  const supabase = await createClient();
 
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.from("bids").select("*").eq("project_id", projectId)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setBids(data ?? []));
-  }, [projectId]);
-
-  async function handleCreate(formData: FormData) {
-    setLoading(true);
-    await createBid(projectId, formData);
-    setLoading(false);
-  }
+  const { data: bids } = await supabase
+    .from("bids")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
 
   return (
     <div className="space-y-4">
@@ -47,26 +30,10 @@ export default function BidsPage() {
           <h2 className="text-lg font-semibold">Bids</h2>
           <p className="text-sm text-muted-foreground">Competitive bidding and vendor comparison</p>
         </div>
-        <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" /> New Bid
-        </Button>
+        <CreateBidForm projectId={projectId} />
       </div>
 
-      {showForm && (
-        <form action={handleCreate} className="rounded-xl border bg-card p-4 shadow-sm space-y-3">
-          <Input name="name" placeholder="Bid name *" required />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Input name="description" placeholder="Description (optional)" />
-            <Input name="dueDate" type="date" />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setShowForm(false)} type="button">Cancel</Button>
-            <Button size="sm" type="submit" disabled={loading}>{loading ? "Creating..." : "Create"}</Button>
-          </div>
-        </form>
-      )}
-
-      {bids.length === 0 && !showForm ? (
+      {!bids || bids.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-16">
           <Gavel className="h-12 w-12 text-muted-foreground/20" />
           <h3 className="mt-4 font-semibold">No bids yet</h3>

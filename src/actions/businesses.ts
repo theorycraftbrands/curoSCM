@@ -33,3 +33,36 @@ export async function createBusiness(formData: FormData) {
   if (error) return { error: error.message };
   redirect(`/businesses/${data.id}`);
 }
+
+export async function updateBusiness(
+  id: string,
+  data: {
+    name: string;
+    legal_name?: string | null;
+    business_type: string;
+    tax_reference?: string | null;
+    phone?: string | null;
+    website?: string | null;
+    timezone?: string | null;
+    is_active: boolean;
+  }
+) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("businesses")
+    .update({
+      name: data.name,
+      legal_name: data.legal_name ?? null,
+      business_type: data.business_type as BusinessType,
+      tax_reference: data.tax_reference ?? null,
+      phone: data.phone ?? null,
+      website: data.website ?? null,
+      timezone: data.timezone ?? "UTC",
+      is_active: data.is_active,
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/businesses/${id}`);
+  return { success: true };
+}

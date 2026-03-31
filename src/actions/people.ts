@@ -35,6 +35,8 @@ export async function createPerson(formData: FormData) {
 export async function updatePerson(id: string, formData: FormData) {
   const supabase = await createClient();
 
+  const isActiveStr = formData.get("isActive") as string | null;
+
   const { error } = await supabase
     .from("people")
     .update({
@@ -46,6 +48,7 @@ export async function updatePerson(id: string, formData: FormData) {
       department: (formData.get("department") as string) || null,
       business_id: (formData.get("businessId") as string) || null,
       city: (formData.get("city") as string) || null,
+      ...(isActiveStr != null ? { is_active: isActiveStr === "true" } : {}),
     })
     .eq("id", id);
 

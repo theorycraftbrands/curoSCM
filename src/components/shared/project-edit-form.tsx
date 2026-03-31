@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { createClient } from "@/lib/supabase/client";
+import { updateProject } from "@/actions/projects";
 import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface ProjectEditFormProps {
@@ -39,20 +39,18 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
+    form.set("status", status);
 
-    const { error: err } = await supabase.from("projects").update({
-      name: form.get("name") as string,
-      description: (form.get("description") as string) || null,
-      status: status as "draft" | "active" | "on_hold" | "complete" | "cancelled",
-      currency: (form.get("currency") as string) || "USD",
-      start_date: (form.get("startDate") as string) || null,
-      end_date: (form.get("endDate") as string) || null,
-    }).eq("id", project.id);
-
-    if (err) { setError(err.message); setLoading(false); }
-    else { router.refresh(); close(); }
+    try {
+      const result = await updateProject(project.id, form);
+      if (result?.error) { setError(result.error); setLoading(false); }
+      else { router.refresh(); close(); }
+    } catch {
+      setError("Network error — could not save. Please try again.");
+      setLoading(false);
+    }
   }
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { searchCatalog } from "@/actions/catalog";
 import { Search, Package, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -33,14 +33,8 @@ export function CatalogPicker({ onSelect, onClear, selected }: CatalogPickerProp
     }
 
     const timer = setTimeout(async () => {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("catalog_items")
-        .select("id, name, sku, unit, default_price, currency, category")
-        .or(`name.ilike.%${query}%,sku.ilike.%${query}%,description.ilike.%${query}%`)
-        .eq("is_active", true)
-        .limit(8);
-      setResults(data ?? []);
+      const data = await searchCatalog(query);
+      setResults(data);
       setOpen(true);
     }, 200);
 

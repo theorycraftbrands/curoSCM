@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getSessionUser } from "@/lib/auth/session";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function createCatalogItem(formData: FormData) {
@@ -30,4 +31,50 @@ export async function createCatalogItem(formData: FormData) {
 
   if (error) return { error: error.message };
   redirect(`/catalog/${data.id}`);
+}
+
+export async function updateCatalogItem(
+  id: string,
+  data: {
+    name: string;
+    description?: string | null;
+    sku?: string | null;
+    unit?: string | null;
+    category?: string | null;
+    default_price?: number | null;
+    currency?: string | null;
+    is_purchasable: boolean;
+    is_active: boolean;
+  }
+) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("catalog_items")
+    .update({
+      name: data.name,
+      description: data.description ?? null,
+      sku: data.sku ?? null,
+      unit: data.unit ?? "each",
+      category: data.category ?? null,
+      default_price: data.default_price ?? null,
+      currency: data.currency ?? "USD",
+      is_purchasable: data.is_purchasable,
+      is_active: data.is_active,
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/catalog/${id}`);
+  return { success: true };
+}
+
+export async function searchCatalog(query: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("catalog_items")
+    .select("id, name, sku, unit, default_price, currency, category")
+    .or(`name.ilike.%${query}%,sku.ilike.%${query}%,description.ilike.%${query}%`)
+    .eq("is_active", true)
+    .limit(8);
+  return data ?? [];
 }

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { createClient } from "@/lib/supabase/client";
+import { updateCatalogItem } from "@/actions/catalog";
 import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface CatalogEditFormProps {
@@ -36,24 +36,29 @@ export function CatalogEditForm({ item }: CatalogEditFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
     const price = form.get("defaultPrice") as string;
 
-    const { error: err } = await supabase.from("catalog_items").update({
-      name: form.get("name") as string,
-      description: (form.get("description") as string) || null,
-      sku: (form.get("sku") as string) || null,
-      unit: (form.get("unit") as string) || "each",
-      category: (form.get("category") as string) || null,
-      default_price: price ? parseFloat(price) : null,
-      currency: (form.get("currency") as string) || "USD",
-      is_purchasable: isPurchasable,
-      is_active: isActive,
-    }).eq("id", item.id);
+    try {
+      const result = await updateCatalogItem(item.id, {
+        name: form.get("name") as string,
+        description: (form.get("description") as string) || null,
+        sku: (form.get("sku") as string) || null,
+        unit: (form.get("unit") as string) || "each",
+        category: (form.get("category") as string) || null,
+        default_price: price ? parseFloat(price) : null,
+        currency: (form.get("currency") as string) || "USD",
+        is_purchasable: isPurchasable,
+        is_active: isActive,
+      });
 
-    if (err) { setError(err.message); setLoading(false); }
-    else { router.refresh(); close(); }
+      if (result?.error) { setError(result.error); setLoading(false); }
+      else { router.refresh(); close(); }
+    } catch {
+      setError("Network error — could not save. Please try again.");
+      setLoading(false);
+    }
   }
 
   return (

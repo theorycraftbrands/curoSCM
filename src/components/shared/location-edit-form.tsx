@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { createClient } from "@/lib/supabase/client";
+import { updateLocation } from "@/actions/locations";
 import { useEditSheet } from "@/components/shared/edit-sheet";
 
 interface LocationEditFormProps {
@@ -39,24 +39,29 @@ export function LocationEditForm({ location, businesses }: LocationEditFormProps
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
 
-    const { error: err } = await supabase.from("locations").update({
-      name: form.get("name") as string,
-      location_type: locType as "mailing" | "shipping" | "fabrication" | "warehouse" | "office",
-      address_line_1: (form.get("addressLine1") as string) || null,
-      address_line_2: (form.get("addressLine2") as string) || null,
-      city: (form.get("city") as string) || null,
-      state_province: (form.get("stateProvince") as string) || null,
-      postal_code: (form.get("postalCode") as string) || null,
-      country: (form.get("country") as string) || null,
-      business_id: (form.get("businessId") as string) || null,
-      is_active: isActive,
-    }).eq("id", location.id);
+    try {
+      const result = await updateLocation(location.id, {
+        name: form.get("name") as string,
+        location_type: locType,
+        address_line_1: (form.get("addressLine1") as string) || null,
+        address_line_2: (form.get("addressLine2") as string) || null,
+        city: (form.get("city") as string) || null,
+        state_province: (form.get("stateProvince") as string) || null,
+        postal_code: (form.get("postalCode") as string) || null,
+        country: (form.get("country") as string) || null,
+        business_id: (form.get("businessId") as string) || null,
+        is_active: isActive,
+      });
 
-    if (err) { setError(err.message); setLoading(false); }
-    else { router.refresh(); close(); }
+      if (result?.error) { setError(result.error); setLoading(false); }
+      else { router.refresh(); close(); }
+    } catch {
+      setError("Network error — could not save. Please try again.");
+      setLoading(false);
+    }
   }
 
   return (

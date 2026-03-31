@@ -4,6 +4,7 @@ import { useState } from "react";
 import { saveBidResponse } from "@/actions/bids";
 import { Input } from "@/components/ui/input";
 import { Star, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 interface Proponent {
   id: string;
@@ -100,8 +101,14 @@ export function ComparisonGrid({ bidId, projectId, proponents, items, responses 
   async function handleSave(itemId: string, proponentId: string) {
     const price = parseFloat(cellValue);
     if (isNaN(price)) return;
-    await saveBidResponse(itemId, proponentId, { unit_price: price }, projectId, bidId);
-    setEditingCell(null);
+    try {
+      const result = await saveBidResponse(itemId, proponentId, { unit_price: price }, projectId, bidId);
+      if (result?.error) toast.error(result.error);
+      setEditingCell(null);
+    } catch (err) {
+      toast.error("Network error — could not save response. Please try again.");
+      console.error("Save bid response failed:", err);
+    }
   }
 
   if (proponents.length === 0 || items.length === 0) {

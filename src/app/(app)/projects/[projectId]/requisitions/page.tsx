@@ -1,15 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { createRequisition } from "@/actions/requisitions";
-import { useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { CreateRequisitionForm } from "./create-form";
 
 const statusColors: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
@@ -19,29 +12,15 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-destructive/10 text-destructive",
 };
 
-export default function RequisitionsPage() {
-  const { projectId } = useParams<{ projectId: string }>();
-  const [requisitions, setRequisitions] = useState<Array<{
-    id: string; requisition_number: string; name: string; status: string; created_at: string;
-  }>>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default async function RequisitionsPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  const supabase = await createClient();
 
-  useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from("requisitions")
-      .select("*")
-      .eq("project_id", projectId)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setRequisitions(data ?? []));
-  }, [projectId]);
-
-  async function handleCreate(formData: FormData) {
-    setLoading(true);
-    await createRequisition(projectId, formData);
-    setLoading(false);
-  }
+  const { data: requisitions } = await supabase
+    .from("requisitions")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
 
   return (
     <div className="space-y-4">
@@ -52,26 +31,10 @@ export default function RequisitionsPage() {
             Organize items for procurement and bidding
           </p>
         </div>
-        <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          New Requisition
-        </Button>
+        <CreateRequisitionForm projectId={projectId} />
       </div>
 
-      {showForm && (
-        <form action={handleCreate} className="rounded-xl border bg-card p-4 shadow-sm space-y-3">
-          <Input name="name" placeholder="Requisition name *" required />
-          <Input name="description" placeholder="Description (optional)" />
-          <div className="flex justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setShowForm(false)} type="button">Cancel</Button>
-            <Button size="sm" type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create"}
-            </Button>
-          </div>
-        </form>
-      )}
-
-      {requisitions.length === 0 && !showForm ? (
+      {!requisitions || requisitions.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-16">
           <FileText className="h-12 w-12 text-muted-foreground/20" />
           <h3 className="mt-4 font-semibold">No requisitions yet</h3>
