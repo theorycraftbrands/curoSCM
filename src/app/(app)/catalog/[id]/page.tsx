@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Package, DollarSign, Tag } from "lucide-react";
+import { ArrowLeft, Package, DollarSign, Tag, Clock, Hash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { requireOnboarded } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { EntityTabs } from "@/components/shared/entity-tabs";
+import { EditSheet } from "@/components/shared/edit-sheet";
+import { CatalogEditForm } from "@/components/shared/catalog-edit-form";
 
 export default async function CatalogItemDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,9 +32,15 @@ export default async function CatalogItemDetailPage({ params }: { params: Promis
             <h1 className="text-2xl font-semibold tracking-tight">{item.name}</h1>
             {item.sku && <p className="mt-0.5 font-mono text-sm text-muted-foreground">{item.sku}</p>}
           </div>
-          <Badge variant={item.is_purchasable ? "secondary" : "outline"}>
-            {item.is_purchasable ? "Purchasable" : "Inactive"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={item.is_purchasable ? "secondary" : "outline"}>
+              {item.is_purchasable ? "Purchasable" : "Not Purchasable"}
+            </Badge>
+            {!item.is_active && <Badge variant="outline">Inactive</Badge>}
+            <EditSheet title="Edit Catalog Item">
+              {({ close }) => <CatalogEditForm item={item} close={close} />}
+            </EditSheet>
+          </div>
         </div>
       </div>
 
@@ -45,27 +53,51 @@ export default async function CatalogItemDetailPage({ params }: { params: Promis
             </div>
           )}
           <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold">Item Details</h2>
+            <h2 className="mb-4 text-sm font-semibold">Item Specifications</h2>
             <div className="grid gap-4 sm:grid-cols-2">
-              {item.category && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Tag className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Category:</span>
-                  <span>{item.category}</span>
+              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+                <Tag className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Category</p>
+                  <p className="text-sm">{item.category || <span className="text-muted-foreground/50">Uncategorized</span>}</p>
                 </div>
-              )}
-              <div className="flex items-center gap-2 text-sm">
-                <Package className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Unit:</span>
-                <span>{item.unit}</span>
               </div>
-              {item.default_price != null && (
-                <div className="flex items-center gap-2 text-sm">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Price:</span>
-                  <span className="font-mono tabular-nums">${Number(item.default_price).toFixed(2)} {item.currency}</span>
+              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+                <Package className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Unit of Measure</p>
+                  <p className="text-sm">{item.unit}</p>
                 </div>
-              )}
+              </div>
+              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+                <DollarSign className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Default Price</p>
+                  {item.default_price != null ? (
+                    <p className="text-sm font-mono tabular-nums">${Number(item.default_price).toFixed(2)} {item.currency}</p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground/50">No price set</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+                <Hash className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">SKU</p>
+                  {item.sku ? (
+                    <p className="text-sm font-mono">{item.sku}</p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground/50">No SKU</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-xl border bg-card p-6 shadow-sm">
+            <h2 className="mb-4 text-sm font-semibold">Record Details</h2>
+            <div className="grid gap-3 sm:grid-cols-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2"><Clock className="h-3.5 w-3.5" /> Created {new Date(item.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
+              <div className="flex items-center gap-2"><Clock className="h-3.5 w-3.5" /> Updated {new Date(item.updated_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
             </div>
           </div>
         </div>

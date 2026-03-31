@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Info, ClipboardList, Package, FileText, CheckCircle2, MessageSquare, Paperclip } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft } from "lucide-react";
 import { requireOnboarded } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { ProjectNav } from "@/components/shared/project-nav";
+import { EditSheet } from "@/components/shared/edit-sheet";
+import { ProjectEditForm } from "@/components/shared/project-edit-form";
 
 const statusColors: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
@@ -63,16 +64,21 @@ export default async function ProjectLayout({
               </p>
             )}
           </div>
-          <div className="text-right text-xs text-muted-foreground">
-            <div className="font-mono tabular-nums">{project.currency}</div>
-            {project.start_date && (
-              <div className="mt-1">
-                {new Date(project.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                {project.end_date && (
-                  <> — {new Date(project.end_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</>
-                )}
-              </div>
-            )}
+          <div className="flex items-start gap-3">
+            <div className="text-right text-xs text-muted-foreground">
+              <div className="font-mono tabular-nums">{project.currency}</div>
+              {project.start_date && (
+                <div className="mt-1">
+                  {new Date(project.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  {project.end_date && (
+                    <> — {new Date(project.end_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</>
+                  )}
+                </div>
+              )}
+            </div>
+            <EditSheet title="Edit Project">
+              {({ close }) => <ProjectEditForm project={project} close={close} />}
+            </EditSheet>
           </div>
         </div>
       </div>
