@@ -162,7 +162,7 @@ services:
     container_name: curoscm-kong
     restart: always
     ports:
-      - "127.0.0.1:8443:8000"
+      - "0.0.0.0:8443:8000"
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
