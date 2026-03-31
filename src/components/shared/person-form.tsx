@@ -113,7 +113,7 @@ export function PersonForm({
             id="city"
             name="city"
             defaultValue={defaultValues.city}
-            placeholder="Calgary"
+            placeholder="Houston"
           />
         </div>
       </div>

@@ -25,7 +25,7 @@ export async function createLocation(formData: FormData) {
       city: (formData.get("city") as string) || null,
       state_province: (formData.get("stateProvince") as string) || null,
       postal_code: (formData.get("postalCode") as string) || null,
-      country: (formData.get("country") as string) || "Canada",
+      country: (formData.get("country") as string) || "United States",
       business_id: (formData.get("businessId") as string) || null,
     })
     .select()

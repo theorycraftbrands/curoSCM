@@ -65,20 +65,20 @@ export default function NewLocationPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input id="city" name="city" placeholder="Calgary" />
+              <Input id="city" name="city" placeholder="Houston" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="stateProvince">Province/State</Label>
-              <Input id="stateProvince" name="stateProvince" placeholder="AB" />
+              <Input id="stateProvince" name="stateProvince" placeholder="TX" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="postalCode">Postal code</Label>
-              <Input id="postalCode" name="postalCode" placeholder="T2P 1A1" />
+              <Input id="postalCode" name="postalCode" placeholder="77001" />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="country">Country</Label>
-            <Input id="country" name="country" defaultValue="Canada" />
+            <Input id="country" name="country" defaultValue="United States" />
           </div>
           {error && <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
           <div className="flex justify-end">

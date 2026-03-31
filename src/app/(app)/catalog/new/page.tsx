@@ -55,7 +55,7 @@ export default function NewCatalogItemPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="currency">Currency</Label>
-              <Input id="currency" name="currency" defaultValue="CAD" />
+              <Input id="currency" name="currency" defaultValue="USD" />
             </div>
           </div>
           <div className="space-y-2">

@@ -23,7 +23,7 @@ export async function createCatalogItem(formData: FormData) {
       unit: (formData.get("unit") as string) || "each",
       category: (formData.get("category") as string) || null,
       default_price: price ? parseFloat(price) : null,
-      currency: (formData.get("currency") as string) || "CAD",
+      currency: (formData.get("currency") as string) || "USD",
     })
     .select()
     .single();

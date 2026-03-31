@@ -19,7 +19,7 @@ export async function createProject(formData: FormData) {
       team_id: user.memberships[0].team_id,
       name: formData.get("name") as string,
       description: (formData.get("description") as string) || null,
-      currency: (formData.get("currency") as string) || "CAD",
+      currency: (formData.get("currency") as string) || "USD",
       start_date: (formData.get("startDate") as string) || null,
       end_date: (formData.get("endDate") as string) || null,
     })
@@ -46,7 +46,7 @@ export async function updateProject(id: string, formData: FormData) {
     .update({
       name: formData.get("name") as string,
       description: (formData.get("description") as string) || null,
-      currency: (formData.get("currency") as string) || "CAD",
+      currency: (formData.get("currency") as string) || "USD",
       status: (formData.get("status") as string) || undefined,
       start_date: (formData.get("startDate") as string) || null,
       end_date: (formData.get("endDate") as string) || null,

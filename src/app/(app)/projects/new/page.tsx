@@ -53,7 +53,7 @@ export default function NewProjectPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="currency">Currency</Label>
-              <Input id="currency" name="currency" defaultValue="CAD" placeholder="CAD" />
+              <Input id="currency" name="currency" defaultValue="USD" placeholder="USD" />
             </div>
           </div>
 
