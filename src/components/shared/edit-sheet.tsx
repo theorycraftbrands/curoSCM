@@ -24,11 +24,11 @@ export function EditSheet({ title, children }: EditSheetProps) {
         <Pencil className="h-3.5 w-3.5" />
         Edit
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto sm:max-w-lg">
-        <SheetHeader>
+      <SheetContent className="overflow-y-auto sm:max-w-2xl w-full">
+        <SheetHeader className="px-2">
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <div className="mt-6">
+        <div className="mt-6 px-2">
           <EditSheetContext.Provider value={{ close: () => setOpen(false) }}>
             {children}
           </EditSheetContext.Provider>
