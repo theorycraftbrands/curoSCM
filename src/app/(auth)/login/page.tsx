@@ -1,33 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
     setError(null);
-    const result = await signIn(formData);
-    if (result?.error) {
-      setError(result.error);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: formData.get("email"),
+          password: formData.get("password"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // Full page navigation to pick up cookies from the response
+      window.location.href = "/dashboard";
+    } catch {
+      setError("An error occurred. Please try again.");
       setLoading(false);
-    } else {
-      router.push("/dashboard");
     }
   }
 
   return (
     <div className="rounded-xl border bg-card p-8 shadow-sm ring-1 ring-foreground/5">
-      {/* Logo */}
       <div className="mb-6 flex items-center gap-2.5">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
           C
@@ -40,7 +57,7 @@ export default function LoginPage() {
         Sign in to your account
       </p>
 
-      <form action={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
