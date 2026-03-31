@@ -49,7 +49,7 @@ services:
       retries: 5
 
   curoscm-auth:
-    image: supabase/gotrue:v2.170.0
+    image: supabase/gotrue:v2.164.0
     container_name: curoscm-auth
     restart: always
     depends_on:
@@ -103,7 +103,7 @@ services:
           memory: 256M
 
   curoscm-realtime:
-    image: supabase/realtime:v2.33.70
+    image: supabase/realtime:v2.30.34
     container_name: curoscm-realtime
     restart: always
     depends_on:
@@ -178,7 +178,7 @@ services:
           memory: 256M
 
   curoscm-studio:
-    image: supabase/studio:20241202-4c26545
+    image: supabase/studio:latest
     container_name: curoscm-studio
     restart: always
     ports:
