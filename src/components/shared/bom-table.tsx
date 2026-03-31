@@ -6,6 +6,7 @@ import { createBomItem, deleteBomItem } from "@/actions/bom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, X } from "lucide-react";
+import { CatalogPicker } from "./catalog-picker";
 import type { Database } from "@/lib/types/database";
 
 type BomItemType = Database["public"]["Enums"]["bom_item_type"];
@@ -17,10 +18,21 @@ interface BomTableProps {
   items: BomItem[];
 }
 
+interface SelectedCatalogItem {
+  id: string;
+  name: string;
+  sku: string | null;
+  unit: string | null;
+  default_price: number | null;
+  currency: string | null;
+  category: string | null;
+}
+
 export function BomTable({ projectId, bomType, items }: BomTableProps) {
   const pathname = usePathname();
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [catalogItem, setCatalogItem] = useState<SelectedCatalogItem | null>(null);
 
   async function handleAdd(formData: FormData) {
     setLoading(true);
@@ -35,7 +47,9 @@ export function BomTable({ projectId, bomType, items }: BomTableProps) {
       unit_price: price ? parseFloat(price) : undefined,
       cost_code: (formData.get("costCode") as string) || undefined,
       group_name: (formData.get("groupName") as string) || undefined,
+      catalog_item_id: catalogItem?.id,
     });
+    setCatalogItem(null);
     setShowForm(false);
     setLoading(false);
   }
@@ -71,13 +85,45 @@ export function BomTable({ projectId, bomType, items }: BomTableProps) {
       {/* Add form */}
       {showForm && (
         <form action={handleAdd} className="rounded-lg border bg-muted/30 p-4 space-y-3">
+          {/* Catalog search */}
+          <div>
+            <p className="mb-1.5 text-xs font-medium text-muted-foreground">From Catalog (optional)</p>
+            <CatalogPicker
+              selected={catalogItem}
+              onSelect={(item) => {
+                setCatalogItem(item);
+              }}
+              onClear={() => setCatalogItem(null)}
+            />
+          </div>
           <div className="grid gap-3 sm:grid-cols-6">
             <div className="sm:col-span-2">
-              <Input name="description" placeholder="Description *" required className="text-sm" />
+              <Input
+                name="description"
+                placeholder="Description *"
+                required
+                className="text-sm"
+                defaultValue={catalogItem?.name ?? ""}
+                key={catalogItem?.id ?? "manual"}
+              />
             </div>
             <Input name="quantity" type="number" step="0.01" placeholder="Qty" className="text-sm font-mono" />
-            <Input name="unit" placeholder="Unit" defaultValue="each" className="text-sm" />
-            <Input name="unitPrice" type="number" step="0.01" placeholder="Unit price" className="text-sm font-mono" />
+            <Input
+              name="unit"
+              placeholder="Unit"
+              defaultValue={catalogItem?.unit ?? "each"}
+              key={`unit-${catalogItem?.id ?? "manual"}`}
+              className="text-sm"
+            />
+            <Input
+              name="unitPrice"
+              type="number"
+              step="0.01"
+              placeholder="Unit price"
+              defaultValue={catalogItem?.default_price?.toString() ?? ""}
+              key={`price-${catalogItem?.id ?? "manual"}`}
+              className="text-sm font-mono"
+            />
             <Input name="costCode" placeholder="Cost code" className="text-sm font-mono" />
           </div>
           <div className="flex justify-end">

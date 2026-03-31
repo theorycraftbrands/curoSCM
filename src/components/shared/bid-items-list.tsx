@@ -5,6 +5,7 @@ import { addBidItem } from "@/actions/bids";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X } from "lucide-react";
+import { CatalogPicker } from "./catalog-picker";
 import type { Database } from "@/lib/types/database";
 
 type BidItem = Database["public"]["Tables"]["bid_items"]["Row"];
@@ -18,6 +19,7 @@ interface BidItemsListProps {
 export function BidItemsList({ bidId, projectId, items }: BidItemsListProps) {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [catalogItem, setCatalogItem] = useState<{ id: string; name: string; sku: string | null; unit: string | null; default_price: number | null; currency: string | null; category: string | null } | null>(null);
 
   async function handleAdd(formData: FormData) {
     setLoading(true);
@@ -44,12 +46,16 @@ export function BidItemsList({ bidId, projectId, items }: BidItemsListProps) {
 
       {showForm && (
         <form action={handleAdd} className="rounded-lg border bg-muted/30 p-4 space-y-3">
+          <div>
+            <p className="mb-1.5 text-xs font-medium text-muted-foreground">From Catalog (optional)</p>
+            <CatalogPicker selected={catalogItem} onSelect={setCatalogItem} onClear={() => setCatalogItem(null)} />
+          </div>
           <div className="grid gap-3 sm:grid-cols-4">
             <div className="sm:col-span-2">
-              <Input name="description" placeholder="Description *" required className="text-sm" />
+              <Input name="description" placeholder="Description *" required className="text-sm" defaultValue={catalogItem?.name ?? ""} key={catalogItem?.id ?? "manual"} />
             </div>
             <Input name="quantity" type="number" step="0.01" placeholder="Qty" className="text-sm font-mono" />
-            <Input name="unit" placeholder="Unit" defaultValue="each" className="text-sm" />
+            <Input name="unit" placeholder="Unit" defaultValue={catalogItem?.unit ?? "each"} key={`u-${catalogItem?.id ?? "m"}`} className="text-sm" />
           </div>
           <div className="flex justify-end">
             <Button size="sm" type="submit" disabled={loading}>{loading ? "Adding..." : "Add"}</Button>

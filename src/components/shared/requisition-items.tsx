@@ -5,6 +5,7 @@ import { addRequisitionItem, deleteRequisitionItem } from "@/actions/requisition
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, X } from "lucide-react";
+import { CatalogPicker } from "./catalog-picker";
 import type { Database } from "@/lib/types/database";
 
 type RequisitionItem = Database["public"]["Tables"]["requisition_items"]["Row"];
@@ -19,6 +20,7 @@ interface RequisitionItemsProps {
 export function RequisitionItems({ requisitionId, projectId, items, isEditable }: RequisitionItemsProps) {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [catalogItem, setCatalogItem] = useState<{ id: string; name: string; sku: string | null; unit: string | null; default_price: number | null; currency: string | null; category: string | null } | null>(null);
 
   async function handleAdd(formData: FormData) {
     setLoading(true);
@@ -53,12 +55,16 @@ export function RequisitionItems({ requisitionId, projectId, items, isEditable }
 
       {showForm && (
         <form action={handleAdd} className="rounded-lg border bg-muted/30 p-4 space-y-3">
+          <div>
+            <p className="mb-1.5 text-xs font-medium text-muted-foreground">From Catalog (optional)</p>
+            <CatalogPicker selected={catalogItem} onSelect={setCatalogItem} onClear={() => setCatalogItem(null)} />
+          </div>
           <div className="grid gap-3 sm:grid-cols-5">
             <div className="sm:col-span-2">
-              <Input name="description" placeholder="Description *" required className="text-sm" />
+              <Input name="description" placeholder="Description *" required className="text-sm" defaultValue={catalogItem?.name ?? ""} key={catalogItem?.id ?? "manual"} />
             </div>
             <Input name="quantity" type="number" step="0.01" placeholder="Qty" className="text-sm font-mono" />
-            <Input name="unit" placeholder="Unit" defaultValue="each" className="text-sm" />
+            <Input name="unit" placeholder="Unit" defaultValue={catalogItem?.unit ?? "each"} key={`u-${catalogItem?.id ?? "m"}`} className="text-sm" />
             <Input name="costCode" placeholder="Cost code" className="text-sm font-mono" />
           </div>
           <div className="flex justify-end">
