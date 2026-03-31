@@ -219,55 +219,65 @@ function BomRow({
 
   const subtotal = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
 
-  if (editing) {
-    return (
-      <tr className="bg-primary/5">
-        <td className="px-3 py-1.5 text-muted-foreground font-mono text-xs tabular-nums">{index}</td>
-        <td className="px-1 py-1.5">
-          <Input value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm" autoFocus />
-        </td>
-        <td className="px-1 py-1.5">
-          <Input value={qty} onChange={(e) => setQty(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className="h-7 text-sm font-mono text-right w-20" />
-        </td>
-        <td className="px-1 py-1.5">
-          <Input value={unit} onChange={(e) => setUnit(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm w-16" />
-        </td>
-        <td className="px-1 py-1.5">
-          <Input value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className="h-7 text-sm font-mono text-right w-24" />
-        </td>
-        <td className="px-3 py-1.5 text-right font-mono tabular-nums text-xs text-muted-foreground">
-          {subtotal > 0 ? `$${subtotal.toFixed(2)}` : "—"}
-        </td>
-        <td className="px-1 py-1.5">
-          <Input value={costCode} onChange={(e) => setCostCode(e.target.value)} onKeyDown={handleKeyDown} className="h-7 text-sm font-mono w-24" />
-        </td>
-        <td className="px-2 py-1.5">
-          <button onClick={handleSave} disabled={saving} className="rounded p-1 text-primary hover:bg-primary/10 transition-colors">
-            <Check className="h-3.5 w-3.5" />
-          </button>
-        </td>
-      </tr>
-    );
-  }
+  // Shared cell style — same padding whether editing or not
+  const cellClass = "px-3 py-2";
+  const inputClass = "w-full bg-transparent border-0 border-b border-primary/40 rounded-none px-0 py-0 h-auto text-sm shadow-none focus-visible:ring-0 focus-visible:border-primary";
 
   return (
-    <tr className="group hover:bg-muted/20 transition-colors">
-      <td className="px-3 py-2 text-muted-foreground font-mono text-xs tabular-nums">{index}</td>
-      <td className="px-3 py-2 font-medium cursor-pointer" onClick={() => setEditing(true)}>{item.description}</td>
-      <td className="px-3 py-2 text-right font-mono tabular-nums cursor-pointer" onClick={() => setEditing(true)}>{item.quantity}</td>
-      <td className="px-3 py-2 text-muted-foreground cursor-pointer" onClick={() => setEditing(true)}>{item.unit}</td>
-      <td className="px-3 py-2 text-right font-mono tabular-nums cursor-pointer" onClick={() => setEditing(true)}>
-        {item.unit_price != null ? `$${Number(item.unit_price).toFixed(2)}` : "—"}
+    <tr className={`group transition-colors ${editing ? "bg-primary/5" : "hover:bg-muted/20"}`}>
+      <td className={`${cellClass} text-muted-foreground font-mono text-xs tabular-nums`}>{index}</td>
+      <td className={`${cellClass} font-medium`} onClick={() => !editing && setEditing(true)}>
+        {editing ? (
+          <input value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} className={inputClass} autoFocus />
+        ) : (
+          <span className="cursor-pointer">{item.description}</span>
+        )}
       </td>
-      <td className="px-3 py-2 text-right font-mono tabular-nums font-medium">
-        {item.unit_price != null ? `$${((item.quantity ?? 0) * Number(item.unit_price)).toFixed(2)}` : "—"}
+      <td className={`${cellClass} text-right font-mono tabular-nums`} onClick={() => !editing && setEditing(true)}>
+        {editing ? (
+          <input value={qty} onChange={(e) => setQty(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className={`${inputClass} font-mono text-right`} />
+        ) : (
+          <span className="cursor-pointer">{item.quantity}</span>
+        )}
       </td>
-      <td className="px-3 py-2 font-mono text-xs text-muted-foreground cursor-pointer" onClick={() => setEditing(true)}>{item.cost_code || "—"}</td>
-      <td className="px-3 py-2">
-        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => setEditing(true)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground">
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
+      <td className={`${cellClass} text-muted-foreground`} onClick={() => !editing && setEditing(true)}>
+        {editing ? (
+          <input value={unit} onChange={(e) => setUnit(e.target.value)} onKeyDown={handleKeyDown} className={inputClass} />
+        ) : (
+          <span className="cursor-pointer">{item.unit}</span>
+        )}
+      </td>
+      <td className={`${cellClass} text-right font-mono tabular-nums`} onClick={() => !editing && setEditing(true)}>
+        {editing ? (
+          <input value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={handleKeyDown} type="number" step="0.01" className={`${inputClass} font-mono text-right`} />
+        ) : (
+          <span className="cursor-pointer">{item.unit_price != null ? `$${Number(item.unit_price).toFixed(2)}` : "—"}</span>
+        )}
+      </td>
+      <td className={`${cellClass} text-right font-mono tabular-nums font-medium`}>
+        {editing
+          ? (subtotal > 0 ? `$${subtotal.toFixed(2)}` : "—")
+          : (item.unit_price != null ? `$${((item.quantity ?? 0) * Number(item.unit_price)).toFixed(2)}` : "—")
+        }
+      </td>
+      <td className={`${cellClass} font-mono text-xs text-muted-foreground`} onClick={() => !editing && setEditing(true)}>
+        {editing ? (
+          <input value={costCode} onChange={(e) => setCostCode(e.target.value)} onKeyDown={handleKeyDown} className={`${inputClass} font-mono text-xs`} />
+        ) : (
+          <span className="cursor-pointer">{item.cost_code || "—"}</span>
+        )}
+      </td>
+      <td className={`${cellClass}`}>
+        <div className={`flex gap-0.5 ${editing ? "opacity-100" : "opacity-0 group-hover:opacity-100"} transition-opacity`}>
+          {editing ? (
+            <button onClick={handleSave} disabled={saving} className="rounded p-1 text-primary hover:bg-primary/10 transition-colors">
+              <Check className="h-3.5 w-3.5" />
+            </button>
+          ) : (
+            <button onClick={() => setEditing(true)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground">
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
           <button onClick={() => onDelete(item.id)} className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
