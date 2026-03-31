@@ -69,6 +69,49 @@ export async function addRequisitionItem(
   return { success: true };
 }
 
+export async function pullFromBom(
+  requisitionId: string,
+  projectId: string,
+  bomItemIds: string[]
+) {
+  const user = await getSessionUser();
+  if (!user || !user.organizationId) return { error: "Not authenticated" };
+  if (bomItemIds.length === 0) return { error: "No items selected" };
+
+  const supabase = await createClient();
+
+  // Fetch the selected BOM items
+  const { data: bomItems, error: fetchError } = await supabase
+    .from("bom_items")
+    .select("*")
+    .in("id", bomItemIds);
+
+  if (fetchError) return { error: fetchError.message };
+  if (!bomItems || bomItems.length === 0) return { error: "No BOM items found" };
+
+  // Convert to requisition items
+  const reqItems = bomItems.map((bom, i) => ({
+    requisition_id: requisitionId,
+    organization_id: user.organizationId!,
+    bom_item_id: bom.id,
+    catalog_item_id: bom.catalog_item_id,
+    description: bom.description,
+    quantity: bom.quantity,
+    unit: bom.unit || "each",
+    cost_code: bom.cost_code,
+    group_name: bom.group_name,
+    sort_order: i,
+  }));
+
+  const { error: insertError } = await supabase
+    .from("requisition_items")
+    .insert(reqItems);
+
+  if (insertError) return { error: insertError.message };
+  revalidatePath(`/projects/${projectId}/requisitions/${requisitionId}`);
+  return { success: true, count: reqItems.length };
+}
+
 export async function deleteRequisitionItem(itemId: string, projectId: string, requisitionId: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("requisition_items").delete().eq("id", itemId);

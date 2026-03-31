@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, X } from "lucide-react";
 import { CatalogPicker } from "./catalog-picker";
+import { PullFromBom } from "./pull-from-bom";
 import type { Database } from "@/lib/types/database";
 
 type RequisitionItem = Database["public"]["Tables"]["requisition_items"]["Row"];
@@ -15,9 +16,10 @@ interface RequisitionItemsProps {
   projectId: string;
   items: RequisitionItem[];
   isEditable: boolean;
+  showPullFromBom?: boolean;
 }
 
-export function RequisitionItems({ requisitionId, projectId, items, isEditable }: RequisitionItemsProps) {
+export function RequisitionItems({ requisitionId, projectId, items, isEditable, showPullFromBom = true }: RequisitionItemsProps) {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [catalogItem, setCatalogItem] = useState<{ id: string; name: string; sku: string | null; unit: string | null; default_price: number | null; currency: string | null; category: string | null } | null>(null);
@@ -46,10 +48,15 @@ export function RequisitionItems({ requisitionId, projectId, items, isEditable }
           Items <span className="font-mono text-muted-foreground">({items.length})</span>
         </h3>
         {isEditable && (
-          <Button size="sm" variant="outline" onClick={() => setShowForm(!showForm)}>
-            {showForm ? <X className="mr-1.5 h-3.5 w-3.5" /> : <Plus className="mr-1.5 h-3.5 w-3.5" />}
-            {showForm ? "Cancel" : "Add Item"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {showPullFromBom && (
+              <PullFromBom requisitionId={requisitionId} projectId={projectId} />
+            )}
+            <Button size="sm" variant="outline" onClick={() => setShowForm(!showForm)}>
+              {showForm ? <X className="mr-1.5 h-3.5 w-3.5" /> : <Plus className="mr-1.5 h-3.5 w-3.5" />}
+              {showForm ? "Cancel" : "Add Item"}
+            </Button>
+          </div>
         )}
       </div>
 
