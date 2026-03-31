@@ -82,6 +82,82 @@ export type Database = {
           },
         ]
       }
+      bom_items: {
+        Row: {
+          bom_type: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id: string | null
+          cost_code: string | null
+          created_at: string
+          currency: string | null
+          description: string
+          group_name: string | null
+          id: string
+          organization_id: string
+          project_id: string
+          quantity: number
+          sort_order: number | null
+          unit: string | null
+          unit_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          bom_type?: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id?: string | null
+          cost_code?: string | null
+          created_at?: string
+          currency?: string | null
+          description: string
+          group_name?: string | null
+          id?: string
+          organization_id: string
+          project_id: string
+          quantity?: number
+          sort_order?: number | null
+          unit?: string | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bom_type?: Database["public"]["Enums"]["bom_item_type"]
+          catalog_item_id?: string | null
+          cost_code?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string
+          group_name?: string | null
+          id?: string
+          organization_id?: string
+          project_id?: string
+          quantity?: number
+          sort_order?: number | null
+          unit?: string | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bom_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bom_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bom_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           business_type: Database["public"]["Enums"]["business_type"]
@@ -210,6 +286,98 @@ export type Database = {
           },
           {
             foreignKeyName: "catalog_items_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_dates: {
+        Row: {
+          completed_date: string | null
+          created_at: string
+          date_type_id: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          label: string
+          organization_id: string
+          original_date: string | null
+          planned_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          completed_date?: string | null
+          created_at?: string
+          date_type_id?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          label: string
+          organization_id: string
+          original_date?: string | null
+          planned_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          completed_date?: string | null
+          created_at?: string
+          date_type_id?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          label?: string
+          organization_id?: string
+          original_date?: string | null
+          planned_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_dates_date_type_id_fkey"
+            columns: ["date_type_id"]
+            isOneToOne: false
+            referencedRelation: "date_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_dates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      date_types: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          team_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          team_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "date_types_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -522,6 +690,141 @@ export type Database = {
         }
         Relationships: []
       }
+      project_locations: {
+        Row: {
+          id: string
+          location_id: string
+          project_id: string
+          role: string | null
+        }
+        Insert: {
+          id?: string
+          location_id: string
+          project_id: string
+          role?: string | null
+        }
+        Update: {
+          id?: string
+          location_id?: string
+          project_id?: string
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_locations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_memberships: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          role: Database["public"]["Enums"]["project_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          role?: Database["public"]["Enums"]["project_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          role?: Database["public"]["Enums"]["project_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_memberships_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_memberships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          currency: string
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          organization_id: string
+          project_number: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          project_number?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          project_number?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assigned_to: string | null
@@ -690,6 +993,11 @@ export type Database = {
       user_is_org_admin: { Args: { p_org_id: string }; Returns: boolean }
     }
     Enums: {
+      bom_item_type:
+        | "purchase"
+        | "client_supplied"
+        | "vendor_supplied"
+        | "feed_through"
       business_type:
         | "client"
         | "vendor"
@@ -704,6 +1012,7 @@ export type Database = {
         | "warehouse"
         | "office"
       project_role: "manager" | "buyer" | "expediter" | "viewer"
+      project_status: "draft" | "active" | "on_hold" | "complete" | "cancelled"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "open" | "in_progress" | "complete" | "cancelled"
       team_role: "owner" | "admin" | "member" | "viewer"
@@ -837,6 +1146,12 @@ export const Constants = {
   },
   public: {
     Enums: {
+      bom_item_type: [
+        "purchase",
+        "client_supplied",
+        "vendor_supplied",
+        "feed_through",
+      ],
       business_type: [
         "client",
         "vendor",
@@ -853,6 +1168,7 @@ export const Constants = {
         "office",
       ],
       project_role: ["manager", "buyer", "expediter", "viewer"],
+      project_status: ["draft", "active", "on_hold", "complete", "cancelled"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["open", "in_progress", "complete", "cancelled"],
       team_role: ["owner", "admin", "member", "viewer"],
