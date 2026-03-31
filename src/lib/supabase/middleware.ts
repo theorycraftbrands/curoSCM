@@ -35,7 +35,13 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
+
+  // Debug: log auth result in production
+  if (authError) {
+    console.log("[middleware] auth error:", authError.message, "path:", request.nextUrl.pathname);
+  }
 
   // Auth page paths (no sidebar, accessible without auth or during onboarding)
   const isAuthPage = request.nextUrl.pathname.startsWith("/login") ||
